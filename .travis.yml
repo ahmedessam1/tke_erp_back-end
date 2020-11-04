@@ -1,0 +1,23 @@
+language: php
+
+php:
+  - 7.1
+
+before_script:
+  - cp .env.travis .env
+  - composer self-update
+  - composer install --prefer-source --no-interaction --dev
+  - php artisan key:generate
+  - php artisan migrate
+  - composer dump-autoload
+  - php artisan db:seed
+  - php artisan passport:install
+
+before_install:
+  - mysql -e 'CREATE DATABASE realworld_test;'
+
+script:
+  - phpunit
+
+services:
+  - mysql
