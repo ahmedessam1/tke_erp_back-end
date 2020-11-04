@@ -4,11 +4,11 @@ Route::middleware(['auth:api'])->group(function () {
         // GET ALL PRODUCTS
         Route::get('/', 'ProductsController@index')
             -> name('index')
-            -> middleware(['role:super_admin']);
+            -> middleware(['role:super_admin|sales']);
         // SHOW PRODUCT DETAILS
         Route::get('/show/{product_id}', 'ProductsController@show')
             -> name('show')
-            -> middleware(['role:super_admin']);
+            -> middleware(['role:super_admin|sales']);
         // PRODUCT REQUIREMENTS FOR ADDING A NEW PRODUCT
         Route::get('/add', 'ProductsController@add')
             -> name('add')
@@ -20,7 +20,7 @@ Route::middleware(['auth:api'])->group(function () {
         // FILTERING PRODUCTS BY CATEGORY AND SUBCATEGORIES
         Route::post('/category/subcategory/filtering', 'ProductsController@categorySubcategoryFiltering')
             -> name('category.subcategory.filtering')
-            -> middleware(['role:super_admin']);
+            -> middleware(['role:super_admin|sales']);
         // ADD IMAGE TO PRODUCT
         Route::post('/add/image', 'ProductsController@addImage')
             -> name('add.image')
@@ -40,7 +40,7 @@ Route::middleware(['auth:api'])->group(function () {
         // SEARCH PRODUCTS
         Route::get('/search', 'ProductsController@search')
             -> name('search')
-            -> middleware(['role:super_admin']);
+            -> middleware(['role:super_admin|sales']);
         // SOFT DELETE PRODUCT
         Route::delete('/delete/{product}', 'ProductsController@delete')
             -> name('delete')
