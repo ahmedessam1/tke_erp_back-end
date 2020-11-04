@@ -38,13 +38,10 @@ class EloquentProductRepository implements ProductRepository
 
     public function getAllActiveProducts()
     {
-        $products_data = $this->cache->remember('products:' . $_REQUEST['page'], function () {
             $counter = Product::count();
             $products_counter = collect(['products_counter' => $counter]);
             $products = $this->getProductsFullDetails()->paginate(30);
-            return json_encode($products_counter->merge($products));
-        }, config('constants.cache_expiry_minutes_small'));
-        return json_decode($products_data);
+            return $products_counter->merge($products);
     }
 
     public function getProductsSearchResult($q, $category_id)
@@ -89,7 +86,6 @@ class EloquentProductRepository implements ProductRepository
 
     public function storeProduct($request)
     {
-        $this->cache->forgetByPattern('products:*');
         return DB::transaction(function () use ($request) {
             // GENERATE NEW LOCAL CODE AND STORING IT IN THE DATABASE
             $local_code_gen = $this->getLocalCode();
@@ -164,7 +160,6 @@ class EloquentProductRepository implements ProductRepository
 
     public function updateProduct($request, $product_id)
     {
-        $this->cache->forgetByPattern('products:*');
         return DB::transaction(function () use ($request, $product_id) {
             // FIND THE PRODUCT
             $product = Product::withCreatedByAndUpdatedBy()->find($product_id);
@@ -212,7 +207,6 @@ class EloquentProductRepository implements ProductRepository
     {
         $product = Product::find($product_id);
         if ($product->deletable) {
-            $this->cache->forgetByPattern('products:*');
             $product->delete();
             // DELETING PRODUCT LOG
             $product->productLog->delete();
@@ -224,7 +218,6 @@ class EloquentProductRepository implements ProductRepository
 
     public function restoreProduct($product_id)
     {
-        $this->cache->forgetByPattern('products:*');
         // RESTORING THE PRODUCT
         $product = Product::withTrashed()->find($product_id);
         $product->restore();
