@@ -28,7 +28,10 @@ class EloquentRequirementRepository implements RequirementRepository {
     }
 
     public function users () {
-        return $this -> getUsersListOrderedByName();
+        if (Auth::user()->hasRole(['super_admin']))
+            return $this->getUsersListOrderedByName();
+        else
+            return $this->getLoggedUserName();
     }
 
     public function paymentTypes () {
@@ -53,9 +56,9 @@ class EloquentRequirementRepository implements RequirementRepository {
 
     public function customers () {
         $user = Auth::user();
-        if ($user->hasRole('super_admin'))
+        if ($user->hasRole(['super_admin']))
             return $this -> getCustomersListOrderedByName();
-        else if ($user->hasRole('super_admin'))
+        else if ($user->hasRole(['super_admin']))
             return $this -> getCustomersListPerUserOrderedByName();
         else
             return 403;
@@ -63,9 +66,9 @@ class EloquentRequirementRepository implements RequirementRepository {
 
     public function customersBranches () {
         $user = Auth::user();
-        if ($user->hasRole('super_admin'))
+        if ($user->hasRole(['super_admin']))
             return $this -> getCustomersBranchesListOrderedByName();
-        else if ($user->hasRole('super_admin'))
+        else if ($user->hasRole(['super_admin']))
             return $this -> getCustomersBranchesListPerUserOrderedByName();
         else
             return 403;

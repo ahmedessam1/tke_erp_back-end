@@ -232,8 +232,8 @@ class EloquentReportSalesRepository implements ReportSalesRepository
 
     public function sellersProgress($year, $sellers_id, $types)
     {
-        $this->cache->forget('sellers_progress_report:' . implode(':', $types) . implode(':', $sellers_id) . $year);
-
+        if (Auth::user()->hasRole(['sales']))
+            $sellers_id = [$this->getAuthUserId()];
         $result = $this->cache->remember('sellers_progress_report:' . implode(':', $types) . implode(':', $sellers_id) . $year,
             function () use ($year, $sellers_id, $types) {
                 $data = [];
@@ -459,8 +459,6 @@ class EloquentReportSalesRepository implements ReportSalesRepository
                 ]);
             }
         }
-
-        return $holder;
 
         $result = [];
         foreach($holder as $k => $v) {

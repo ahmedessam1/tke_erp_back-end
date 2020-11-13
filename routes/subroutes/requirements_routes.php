@@ -3,8 +3,7 @@ Route::middleware(['auth:api'])->group(function () {
     Route::prefix('requirements')->name('requirements.')->group(function () {
         // GET PAYMENT METHODS
         Route::get('/users', 'RequirementsController@users')
-            -> name('users')
-            -> middleware(['role:super_admin']);
+            -> name('users'); // ROLE IS SET INSIDE
 
 
         // GET PAYMENT METHODS

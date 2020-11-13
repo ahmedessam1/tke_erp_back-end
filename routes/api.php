@@ -12,9 +12,21 @@ Route::middleware(['auth:api'])->group(function () {
     Route::post('/register', 'AuthController@register')
         -> name('register')
         -> middleware(['role:super_admin']);
+    // USER EDIT
+    Route::get('/users/edit/{user_id}', 'AuthController@edit')
+        -> name('edit')
+        -> middleware(['role:super_admin']);
+    // USER UPDATE
+    Route::patch('/users/update/{user_id}', 'AuthController@update')
+        -> name('update')
+        -> middleware(['role:super_admin']);
+    // USER UPDATE PASSWORD
+    Route::patch('/users/update/{user_id}/password', 'AuthController@updatePassword')
+        -> name('update_password')
+        -> middleware(['role:super_admin']);
     // ALL PERMISSIONS
-    Route::get('/permissions', 'AuthController@permissions')
-        -> name('permissions')
+    Route::get('/roles', 'AuthController@roles')
+        -> name('roles')
         -> middleware(['role:super_admin']);
 
 

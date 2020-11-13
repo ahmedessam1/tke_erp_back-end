@@ -74,7 +74,7 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
     public function showExportInvoiceDetails($export_invoice_id)
     {
         $user = Auth::user();
-        if ($user->hasRole('super_admin')) {
+        if ($user->hasRole(['super_admin'])) {
             $export_invoice = ExportInvoice::withCustomerBranch()
                 ->withSeller()
                 ->withSoldProductsImages()

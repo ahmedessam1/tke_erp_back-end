@@ -27,7 +27,7 @@ Route::middleware(['auth:api'])->group(function () {
         // SHOW PRODUCT DETAILS
         Route::get('/show/{export_invoice_id}', 'ExportInvoicesController@show')
             -> name('show')
-            -> middleware(['role:super_admin']);
+            -> middleware(['role:super_admin|sales']);
         // EDIT A EXPORT_INVOICE
         Route::get('/edit/{export_invoice_id}', 'ExportInvoicesController@edit')
             -> name('edit')
@@ -52,10 +52,10 @@ Route::middleware(['auth:api'])->group(function () {
         // INVOICES PER USER
         Route::get('/per_user', 'ExportInvoicesController@invoicesPerUser')
             -> name('per_user')
-            -> middleware(['role:super_admin']);
+            -> middleware(['role:super_admin|sales']);
         // INVOICES PER USER SEARCH
         Route::get('/per_user/search', 'ExportInvoicesController@invoicesPerUserSearch')
             -> name('per_user.search')
-            -> middleware(['role:super_admin']);
+            -> middleware(['role:super_admin|sales']);
     });
 });

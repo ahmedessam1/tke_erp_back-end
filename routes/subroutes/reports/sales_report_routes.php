@@ -29,6 +29,6 @@ Route::middleware(['auth:api'])->group(function () {
         // SELLERS PROGRESS
         Route::post('/sellers_progress', 'Reports\SalesReportController@sellersProgress')
             -> name('sellers_progress')
-            -> middleware(['role:super_admin']);
+            -> middleware(['role:super_admin|sales']);
     });
 });

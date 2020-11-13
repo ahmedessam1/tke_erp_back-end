@@ -8,7 +8,7 @@ use App\User;
 use Auth;
 use DB;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class AuthController extends Controller
 {
@@ -50,7 +50,6 @@ class AuthController extends Controller
         // GET USER DETAILS WITH ROLES AND PERMISSIONS.
         $user = Auth::user();
         $user -> getAllPermissions();
-
         return $user;
     }
 
@@ -59,7 +58,7 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6',
-            'permissions' => 'required',
+            'role_id' => 'required|exists:roles,id',
         ]);
         return DB::transaction(function () use ($request) {
             // CREATE THE USER
@@ -68,16 +67,47 @@ class AuthController extends Controller
                 'email' => $request -> email,
                 'password' => Hash::make($request -> password),
             ]);
-
-            // ASSIGN PERMISSIONS
-            $user -> givePermissionTo($request -> permissions);
-
+            // ASSIGN ROLE TO USER
+            $user->assignRole($request->role_id);
             return $user;
         });
     }
 
-    public function permissions () {
-        $permissions = Permission::pluck('name', 'id');
-        return $permissions;
+    public function edit ($user_id) {
+        $user = User::with('roles')->find($user_id);
+        return $user;
+    }
+
+    public function update (Request $request, $user_id) {
+        $this -> validate($request, [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,'.$user_id,
+            'role_id' => 'required|exists:roles,id',
+        ]);
+        return DB::transaction(function () use ($request, $user_id) {
+            // UPDATE USER
+            $user = User::find($user_id);
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->save();
+
+            // ASSIGN ROLE TO USER
+            DB::table('model_has_roles')->where('model_id', $user_id)->delete();
+            $user->assignRole($request->role_id);
+            return $user;
+        });
+    }
+
+    public function updatePassword (Request $request, $user_id) {
+        $this -> validate($request, ['password' => 'required|string|min:4']);
+        // UPDATE USER PASSWORD
+        $user = User::find($user_id);
+        $user -> password = Hash::make($request->password);
+        $user->save();
+        return $user;
+    }
+
+    public function roles () {
+        return Role::pluck('name', 'id');
     }
 }

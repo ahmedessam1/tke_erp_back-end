@@ -4,7 +4,7 @@ Route::middleware(['auth:api'])->group(function () {
         // EXPORT PRODUCT CREDITS TO EXCEL
         Route::get('/credits_export', 'Reports\ProductsReportController@exportProductsCredit')
             -> name('credits_export')
-            -> middleware(['role:super_admin']);
+            -> middleware(['role:super_admin|sales']);
 
         // SHOW THE PRODUCT HISTORY
         Route::post('/history', 'Reports\ProductsReportController@productHistory')

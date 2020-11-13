@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\Product\Product;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -46,15 +47,20 @@ class ProductCreditExport implements FromCollection, WithMapping, WithHeadings, 
 
     public function headings(): array
     {
-        return [
+        $headers = [
             trans('reports.CREDITS.EXCEL_COLUMNS.ID'),
             trans('reports.CREDITS.EXCEL_COLUMNS.NAME'),
             trans('reports.CREDITS.EXCEL_COLUMNS.CODE'),
             trans('reports.CREDITS.EXCEL_COLUMNS.BARCODE'),
             trans('reports.CREDITS.EXCEL_COLUMNS.CATEGORY'),
             trans('reports.CREDITS.EXCEL_COLUMNS.TOTAL_QUANTITY'),
-            trans('reports.CREDITS.EXCEL_COLUMNS.AVG_PURCHASE_PRICE'),
-            trans('reports.CREDITS.EXCEL_COLUMNS.TOTAL_CREDIT'),
         ];
+
+        if (Auth::user()->hasRole(['super_admin'])) {
+            array_push($headers, trans('reports.CREDITS.EXCEL_COLUMNS.AVG_PURCHASE_PRICE'));
+            array_push($headers, trans('reports.CREDITS.EXCEL_COLUMNS.TOTAL_CREDIT'));
+        }
+
+        return $headers;
     }
 }

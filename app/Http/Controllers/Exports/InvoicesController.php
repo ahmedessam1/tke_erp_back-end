@@ -23,13 +23,13 @@ class InvoicesController extends Controller
                 return Excel::download(new ExportInvoice($type, $invoice_id), date('Y-mm-dd') . '.xlsx');
             }
         } else if ($type === 'imports') {
-            if ($user->hasRole('super_admin')) {
+            if ($user->hasRole(['super_admin'])) {
                 // STORE ACTION
                 event(new ActionHappened('report generate', 'exporting import invoice', $this->getAuthUserId()));
                 return Excel::download(new ExportInvoice($type, $invoice_id), date('Y-mm-dd') . '.xlsx');
             }
         } else if ($type === 'refunds') {
-            if ($user->hasRole('super_admin')) {
+            if ($user->hasRole(['super_admin'])) {
                 // STORE ACTION
                 event(new ActionHappened('report generate', 'exporting refund invoice', $this->getAuthUserId()));
                 return Excel::download(new ExportInvoice($type, $invoice_id), date('Y-mm-dd') . '.xlsx');
