@@ -83,9 +83,7 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
             $export_invoice = ExportInvoice::withCustomerBranch()
                 ->withSoldProductsImages()
                 ->withCustomerBranch()
-                ->whereHas('customerBranch.sellers', function ($query) {
-                    $query->where('seller_id', $this->getAuthUserId());
-                })
+                ->where('seller_id', $this->getAuthUserId())
                 ->find($export_invoice_id);
         }
 

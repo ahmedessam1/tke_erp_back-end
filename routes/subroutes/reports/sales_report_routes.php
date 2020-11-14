@@ -14,7 +14,7 @@ Route::middleware(['auth:api'])->group(function () {
         // GET BRANCH PRODUCTS WITHDRAWALS
         Route::post('/customer_branch/products_withdrawals', 'Reports\SalesReportController@customerBranchProductsWithdrawals')
             -> name('customer_branch.products_withdrawals')
-            -> middleware(['role:super_admin']);
+            -> middleware(['role:super_admin|sales']);
 
         // GET MONTH SALES
         Route::post('/years', 'Reports\SalesReportController@yearlySales')
