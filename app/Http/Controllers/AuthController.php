@@ -57,7 +57,7 @@ class AuthController extends Controller
         $this -> validate($request, [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:4',
             'role_id' => 'required|exists:roles,id',
         ]);
         return DB::transaction(function () use ($request) {
