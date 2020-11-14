@@ -21,7 +21,7 @@ trait GetCustomersList {
                 });
             })
             -> get()
-            -> pluck('customer_and_branch', 'id');
+            -> pluck('name', 'id');
     }
 
     public function getCustomersListOrderedByID () {

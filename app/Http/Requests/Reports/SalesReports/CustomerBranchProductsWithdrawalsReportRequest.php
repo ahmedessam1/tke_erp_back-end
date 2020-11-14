@@ -20,7 +20,6 @@ class CustomerBranchProductsWithdrawalsReportRequest extends FormRequest
     public function rules()
     {
         return [
-            'customer_branch_id' => 'required|exists:customer_branches,id',
             'from_date' => 'required|date',
             'to_date' => ['required', 'date', new ToDateMoreThanFromDateRule($this -> from_date, $this -> to_date)],
         ];

@@ -41,12 +41,23 @@ class EloquentReportSalesRepository implements ReportSalesRepository
 
     public function customerBranchProductsWithdrawals($request)
     {
+        $customer_id = $request->customer_id;
+        $customer_branch_id = $request->customer_branch_id;
+
         // GET INVOICES
-        $export_invoices = ExportInvoice::withSoldProductsImages()
-            ->withSeller()
-            ->where('customer_branch_id', $request->customer_branch_id)
-            ->whereBetween('date', [$request->from_date, $request->to_date])
-            ->get();
+        if ($customer_id !== null) {
+            $branches_ids = CustomerBranch::where('customer_id', $customer_id)->pluck('id')->toArray();
+            $export_invoices = ExportInvoice::withSoldProductsImages()
+                ->withSeller()
+                ->whereIn('customer_branch_id', $branches_ids)
+                ->whereBetween('date', [$request->from_date, $request->to_date])
+                ->get();
+        } else if ($customer_branch_id !== null)
+            $export_invoices = ExportInvoice::withSoldProductsImages()
+                ->withSeller()
+                ->where('customer_branch_id', $request->customer_branch_id)
+                ->whereBetween('date', [$request->from_date, $request->to_date])
+                ->get();
 
         // GET PRODUCTS DATA
         $export_invoice_ids = [];
