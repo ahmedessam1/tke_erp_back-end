@@ -81,9 +81,16 @@ class EloquentReportSalesRepository implements ReportSalesRepository
         array_multisort($temp_array, SORT_ASC, $products);
 
         // REPORT DATA
-        $customer = CustomerBranch::find($request->customer_branch_id);
+        $customer_name = '';
+        if ($customer_id !== null) {
+            $customer = Customer::find($customer_id);
+            $customer_name = $customer->name;
+        } else if ($customer_branch_id !== null) {
+            $customer = CustomerBranch::find($request->customer_branch_id);
+            $customer_name = $customer->customer_and_branch;
+        }
         $report_data = [
-            'customer' => $customer->customer_and_branch,
+            'customer' => $customer_name,
             'from_date' => $request->from_date,
             'to_date' => $request->to_date,
         ];
