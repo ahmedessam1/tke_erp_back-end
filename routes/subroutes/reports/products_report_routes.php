@@ -29,6 +29,6 @@ Route::middleware(['auth:api'])->group(function () {
         // EXPORT SUPPLIER PRODUCT CREDITS TO EXCEL
         Route::post('/supplier/products/credits_export', 'Reports\ProductsReportController@exportSupplierProductsCredit')
             -> name('supplier.products.credits_export')
-            -> middleware(['role:super_admin']);
+            -> middleware(['role:super_admin|accountant']);
     });
 });

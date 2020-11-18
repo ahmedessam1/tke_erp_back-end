@@ -14,7 +14,7 @@ Route::middleware(['auth:api'])->group(function () {
         // GET SUPPLIERS
         Route::get('/suppliers', 'RequirementsController@suppliers')
             -> name('suppliers')
-            -> middleware(['role:super_admin']);
+            -> middleware(['role:super_admin|accountant']);
 
         // GET JOB POSITIONS
         Route::get('/positions', 'RequirementsController@positions')
