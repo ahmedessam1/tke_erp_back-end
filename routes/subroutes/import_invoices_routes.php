@@ -4,11 +4,11 @@ Route::middleware(['auth:api'])->group(function () {
         // GET ALL IMPORT_INVOICES
         Route::get('/', 'ImportInvoicesController@index')
             -> name('index')
-            -> middleware(['role:super_admin']);
+            -> middleware(['role:super_admin|accountant']);
         // SEARCH IMPORT_INVOICE
         Route::get('/search', 'ImportInvoicesController@search')
             -> name('search')
-            -> middleware(['role:super_admin']);
+            -> middleware(['role:super_admin|accountant']);
         // IMPORT INVOICE REQUIREMENTS FOR ADDING A NEW IMPORT INVOICE
         Route::get('/add', 'ImportInvoicesController@add')
             -> name('add')
