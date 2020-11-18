@@ -21,6 +21,7 @@ class RolePermissionSeeder extends Seeder
             'accountant_manager',
             'accountant',
             'data_entry',
+            'tax',
         ];
 
         for ($x = 0; $x < count($roles); $x++) {

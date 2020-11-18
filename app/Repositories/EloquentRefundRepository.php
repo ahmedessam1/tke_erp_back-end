@@ -24,29 +24,36 @@ class EloquentRefundRepository implements RefundRepository {
     public function index ($request) {
         $sorting = $this->setSorting($request['sort_by'], $request['sort_type']);
         $type = $request['type'];
-        $redis_key = 'refund_invoices:'.$request['page'].':refund_type:'.$type.':sort_by:'.$request['sort_by'].':sort_type:'.$request['sort_type'];
 
-        // RETURN DATA IF IN CACHE AND IF NOT THEN RE-CACHE IT
-        $invoices = $this->cache->remember($redis_key, function () use ($sorting, $type) {
-            if ($type === 'in')
-                $result = Refund::withCustomer()
-                    ->withAssignedUser()
-                    ->where('type', $type)
-                    ->withCustomerSellers()
-                    ->orderBy($sorting['sort_by'], $sorting['sort_type'])
-                    ->paginate(30);
-            else
-                $result = Refund::withSupplier()
-                    ->where('type', $type)
-                    ->orderBy($sorting['sort_by'], $sorting['sort_type'])
-                    ->paginate(30);
+        // ADDING TAX CONDITION
+        $tax_conditions = [];
+        if(Auth::user()->hasRole(['tax']))
+            $tax_conditions = ['tax' => '1'];
 
-            return json_encode($result);
-        }, config('constants.cache_expiry_minutes_small'));
-        return json_decode($invoices);
+        if ($type === 'in')
+            $result = Refund::withCustomer()
+                ->withAssignedUser()
+                ->where('type', $type)
+                ->where($tax_conditions)
+                ->withCustomerSellers()
+                ->orderBy($sorting['sort_by'], $sorting['sort_type'])
+                ->paginate(30);
+        else
+            $result = Refund::withSupplier()
+                ->where('type', $type)
+                ->where($tax_conditions)
+                ->orderBy($sorting['sort_by'], $sorting['sort_type'])
+                ->paginate(30);
+
+        return $result;
     }
 
     public function search ($request) {
+        // ADDING TAX CONDITION
+        $tax_conditions = [];
+        if(Auth::user()->hasRole(['tax']))
+            $tax_conditions = ['tax' => '1'];
+
         $sorting = $this->setSorting($request['sort_by'], $request['sort_type']);
         $type = $request['type'];
         $q = $request['query'];
@@ -55,6 +62,7 @@ class EloquentRefundRepository implements RefundRepository {
             return Refund::withCustomer()
                 ->withAssignedUser()
                 ->where('type', $type)
+                ->where($tax_conditions)
                 ->where(function ($query) use ($q) {
                     $query->where('title', 'LIKE', '%' . $q . '%');
                     $query->orWhere('number', 'LIKE', '%' . $q . '%');
@@ -65,6 +73,7 @@ class EloquentRefundRepository implements RefundRepository {
         else
             return Refund::withSupplier()
                 ->where('type', $type)
+                ->where($tax_conditions)
                 ->where(function ($query) use ($q) {
                     $query->where('title', 'LIKE', '%' . $q . '%');
                     $query->orWhere('number', 'LIKE', '%' . $q . '%');
@@ -74,7 +83,12 @@ class EloquentRefundRepository implements RefundRepository {
     }
 
     public function show ($refund_id) {
-        $refund = Refund::find($refund_id);
+        // ADDING TAX CONDITION
+        $tax_conditions = [];
+        if(Auth::user()->hasRole(['tax']))
+            $tax_conditions = ['tax' => '1'];
+
+        $refund = Refund::where($tax_conditions)->find($refund_id);
         if ($refund->type === 'in')
             return Refund::withRefundedProducts()->withCustomer()->find($refund->id);
         else

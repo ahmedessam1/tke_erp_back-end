@@ -32,40 +32,49 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
 
     public function getAllActiveExportInvoices($request)
     {
-        $sorting = $this->setSorting($request['sort_by'], $request['sort_type']);
-        $redis_key = 'export_invoices:' . $request['page'] . ':sort_by:' . $request['sort_by'] . ':sort_type:' . $request['sort_type'];
+        // ADDING TAX CONDITION
+        $tax_conditions = [];
+        if(Auth::user()->hasRole(['tax']))
+            $tax_conditions = ['tax' => '1'];
 
-        // RETURN DATA IF IN CACHE AND IF NOT THEN RE-CACHE IT
-        $invoices = $this->cache->remember($redis_key, function () use ($sorting) {
-            return json_encode(ExportInvoice::withCustomerBranch()
-                ->withSeller()
-                ->withCreatedByAndUpdatedBy()
-                ->orderBy($sorting['sort_by'], $sorting['sort_type'])
-                ->paginate(30));
-        }, config('constants.cache_expiry_minutes_small'));
-        return json_decode($invoices);
+        $sorting = $this->setSorting($request['sort_by'], $request['sort_type']);
+
+        return ExportInvoice::withCustomerBranch()
+            ->withSeller()
+            ->withCreatedByAndUpdatedBy()
+            ->where($tax_conditions)
+            ->orderBy($sorting['sort_by'], $sorting['sort_type'])
+            ->paginate(30);
     }
 
     public function getExportInvoicesSearchResult($request)
     {
+        // ADDING TAX CONDITION
+        $tax_conditions = [];
+        if(Auth::user()->hasRole(['tax']))
+            $tax_conditions = ['tax' => '1'];
+
         $sorting = $this->setSorting($request['sort_by'], $request['sort_type']);
         $q = $request['query'];
 
         return ExportInvoice::withCustomerBranch()->withSeller()->withCreatedByAndUpdatedBy()->orderedName()
-            ->where('name', 'LIKE', '%' . $q . '%')
-            ->orWhere('number', 'LIKE', '%' . $q . '%')
-            ->orWhere('date', 'LIKE', '%' . $q . '%')
-            // SEARCH FOR CUSTOMER BRANCH
-            ->orWhereHas('customerBranch', function ($query) use ($q) {
-                $query->where('address', 'LIKE', '%' . $q . '%');
-            })
-            // SEARCH BY CUSTOMER NAME
-            ->orWhereHas('customerBranch.customer', function ($query) use ($q) {
+            ->where($tax_conditions)
+            ->where(function ($query) use ($tax_conditions, $q) {
                 $query->where('name', 'LIKE', '%' . $q . '%');
-            })
-            // SEARCH BY SELLER NAME
-            ->orWhereHas('seller', function ($query) use ($q) {
-                $query->where('name', 'LIKE', '%' . $q . '%');
+                $query->orWhere('number', 'LIKE', '%' . $q . '%');
+                $query->orWhere('date', 'LIKE', '%' . $q . '%');
+                // SEARCH FOR CUSTOMER BRANCH
+                $query->orWhereHas('customerBranch', function ($query) use ($q) {
+                    $query->where('address', 'LIKE', '%' . $q . '%');
+                });
+                // SEARCH BY CUSTOMER NAME
+                $query->orWhereHas('customerBranch.customer', function ($query) use ($q) {
+                    $query->where('name', 'LIKE', '%' . $q . '%');
+                });
+                // SEARCH BY SELLER NAME
+                $query->orWhereHas('seller', function ($query) use ($q) {
+                    $query->where('name', 'LIKE', '%' . $q . '%');
+                });
             })
             ->orderBy($sorting['sort_by'], $sorting['sort_type'])
             ->paginate(30);
@@ -73,17 +82,24 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
 
     public function showExportInvoiceDetails($export_invoice_id)
     {
+        // ADDING TAX CONDITION
+        $tax_conditions = [];
+        if(Auth::user()->hasRole(['tax']))
+            $tax_conditions = ['tax' => '1'];
+
         $user = Auth::user();
-        if ($user->hasRole(['super_admin'])) {
+        if ($user->hasRole(['super_admin', 'accountant', 'tax'])) {
             $export_invoice = ExportInvoice::withCustomerBranch()
                 ->withSeller()
                 ->withSoldProductsImages()
+                ->where($tax_conditions)
                 ->find($export_invoice_id);
         } else {
             $export_invoice = ExportInvoice::withCustomerBranch()
                 ->withSoldProductsImages()
                 ->withCustomerBranch()
                 ->where('seller_id', $this->getAuthUserId())
+                ->where($tax_conditions)
                 ->find($export_invoice_id);
         }
 

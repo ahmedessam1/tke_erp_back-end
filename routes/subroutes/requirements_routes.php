@@ -23,8 +23,7 @@ Route::middleware(['auth:api'])->group(function () {
 
         // GET CATEGORIES
         Route::get('/categories', 'RequirementsController@categories')
-            -> name('categories')
-            -> middleware(['role:super_admin|sales|data_entry']);
+            -> name('categories'); // ANYONE ON THE SYSTEM CAN SEE THE CATEGORIES
 
         // GET CATEGORIES
         Route::get('/warehouses', 'RequirementsController@warehouses')
