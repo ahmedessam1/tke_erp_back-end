@@ -201,6 +201,21 @@ class EloquentImportInvoiceRepository implements ImportInvoiceRepository {
         ];
     }
 
+    public function updateProductPurchasePriceInInvoice($request, $invoice_id, $purchase_product_id) {
+        $product = ProductCredits::where('id', $purchase_product_id)
+            -> whereHas('importInvoice', function ($query) use ($invoice_id) {
+                $query -> where('approve', 0);
+            })->first();
+        if ($product) {
+            $product->purchase_price = $request->data['purchase_price'];
+            $product->save();
+        }
+
+        // NEW INVOICE AFTER OBSERVERS
+        $new_invoice = ImportInvoice::withProductCredits()->find($invoice_id);
+        return $new_invoice;
+    }
+
     /*
      * **************************************************
      * ********** PRIVATE HELPERS FUNCTIONS *************

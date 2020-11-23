@@ -35,6 +35,13 @@ trait ProductsReportMutator {
             return;
     }
 
+    public function getReportAvgSellPriceAttribute() {
+        if ($this->hasRole(['super_admin', 'sales', 'accountant']))
+            return $this->productLog->average_sell_price;
+        else
+            return;
+    }
+
     public function getReportTotalCreditAttribute() {
         if ($this->hasRole(['super_admin'])) {
             // GET THE PRODUCT QUANTITY AFTER SOLD

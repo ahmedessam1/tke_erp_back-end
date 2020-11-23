@@ -24,6 +24,7 @@ class Product extends Model
         'deletable',
         'report_total_quantity',
         'report_avg_purchase_price',
+        'report_avg_sell_price',
         'report_total_credit',
     ];
 
