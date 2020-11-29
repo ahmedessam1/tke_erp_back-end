@@ -39,5 +39,5 @@ interface ImportInvoiceRepository {
     // APPROVE IMPORT INVOICE
     public function approveImportInvoice($import_invoice_id);
 
-    public function updateProductPurchasePriceInInvoice($request, $invoice_id, $purchase_product_id);
+    public function updateProductPurchasePriceInInvoice($product_row_id, $new_price);
 }

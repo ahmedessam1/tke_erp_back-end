@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateProductsTable extends Migration
+class CreateCustomerPriceListsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateProductsTable extends Migration
      */
     public function up()
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('customer_price_lists', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name', trans('validation_standards.names.max'))->unique();
-            $table->string('barcode', trans('validation_standards.barcode.size'))->nullable();
-            $table->unsignedInteger('local_code_id');
-            $table->unsignedInteger('category_id');
-            $table->text('description')->nullable();
+            $table->unsignedInteger('customer_id');
+            $table->unsignedInteger('product_id');
+            $table->float('product_selling_price')->default(0);
+            $table->string('product_name', trans('validation_standards.names.max'))->nullable();
+            $table->string('product_barcode', trans('validation_standards.barcode.size'))->nullable();
             $table->unsignedInteger('created_by');
             $table->unsignedInteger('updated_by')->nullable();
             $table->softDeletes();
@@ -29,10 +29,9 @@ class CreateProductsTable extends Migration
             // USERS
             $table->foreign('created_by')->references('id')->on('users');
             $table->foreign('updated_by')->references('id')->on('users');
-            // CATEGORIES
-            $table->foreign('category_id')->references('id')->on('categories');
-            // LOCAL_CODE
-            $table->foreign('local_code_id')->references('id')->on('local_codes');
+            // CUSTOMER AND PRODUCT
+            $table->foreign('customer_id')->references('id')->on('customers');
+            $table->foreign('product_id')->references('id')->on('products');
         });
     }
 
@@ -43,6 +42,6 @@ class CreateProductsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('customer_price_lists');
     }
 }

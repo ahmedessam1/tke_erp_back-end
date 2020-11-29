@@ -76,7 +76,7 @@ class ImportInvoicesController extends Controller
         return Response::json($this->model->approveImportInvoice($import_invoice_id));
     }
 
-    public function updateProductPurchasePriceInInvoice (Request $request, $invoice_id, $purchase_product_id) {
-        return Response::json($this->model->updateProductPurchasePriceInInvoice($request, $invoice_id, $purchase_product_id));
+    public function updateProductPurchasePriceInInvoice ($product_row_id, $new_price) {
+        return Response::json($this->model->updateProductPurchasePriceInInvoice($product_row_id, $new_price));
     }
 }

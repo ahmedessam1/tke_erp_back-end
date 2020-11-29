@@ -11,11 +11,12 @@ use App\Models\Invoices\ImportInvoice;
 use App\Traits\Data\GetCategoriesList;
 use App\Traits\Data\GetSuppliersList;
 use App\Traits\Logic\InvoiceCalculations;
+use App\Traits\Observers\InvoiceObserversTrait;
 use Auth;
 use DB;
 
 class EloquentImportInvoiceRepository implements ImportInvoiceRepository {
-    use GetSuppliersList, GetCategoriesList, InvoiceCalculations;
+    use GetSuppliersList, GetCategoriesList, InvoiceCalculations, InvoiceObserversTrait;
     protected $cache;
     public function __construct()
     {
@@ -201,19 +202,20 @@ class EloquentImportInvoiceRepository implements ImportInvoiceRepository {
         ];
     }
 
-    public function updateProductPurchasePriceInInvoice($request, $invoice_id, $purchase_product_id) {
-        $product = ProductCredits::where('id', $purchase_product_id)
-            -> whereHas('importInvoice', function ($query) use ($invoice_id) {
-                $query -> where('approve', 0);
-            })->first();
-        if ($product) {
-            $product->purchase_price = $request->data['purchase_price'];
-            $product->save();
-        }
+    public function updateProductPurchasePriceInInvoice($product_row_id, $new_price) {
+        return DB::transaction(function() use ($product_row_id, $new_price) {
+            $product = ProductCredits::where('id', $product_row_id)->first();
+            $invoice = ImportInvoice::notApproved()->where('id', $product->import_invoice_id)->first();
+            if ($invoice) {
+                $product->purchase_price = $new_price;
+                $product->save();
+                // ADD PRODUCT NET PRICE TO INVOICE
+                $this->calculateSingleInvoice($invoice->id);
 
-        // NEW INVOICE AFTER OBSERVERS
-        $new_invoice = ImportInvoice::withProductCredits()->find($invoice_id);
-        return $new_invoice;
+                // NEW INVOICE AFTER OBSERVERS
+                return $invoice;
+            }
+        });
     }
 
     /*

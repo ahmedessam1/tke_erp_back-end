@@ -60,7 +60,8 @@ class EloquentProductRepository implements ProductRepository
         $subcategories_id = $filtering->subcategories_id;
         $q = $filtering->q;
         $type = $filtering->type;
-        return $this->categorySubcategoryProductsFiltering($category_id, $subcategories_id, $q, $type);
+        $invoice_id = $filtering->invoice_id;
+        return $this->categorySubcategoryProductsFiltering($category_id, $subcategories_id, $q, $type, $invoice_id);
     }
 
     public function showProductDetails($product_id)

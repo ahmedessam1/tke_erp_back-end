@@ -50,7 +50,7 @@ Route::middleware(['auth:api'])->group(function () {
             -> name('approve')
             -> middleware(['role:super_admin']);
         // UPDATE PRODUCT PURCHASE PRICE IN EXPORT_INVOICE
-        Route::post('/{invoice_id}/update/purchase_price/{purchase_product_id}', 'ImportInvoicesController@updateProductPurchasePriceInInvoice')
+        Route::get('/update/purchase_price/{product_row_id}/{new_price}', 'ImportInvoicesController@updateProductPurchasePriceInInvoice')
             -> name('update_purchase_price')
             -> middleware(['role:super_admin']);
     });
