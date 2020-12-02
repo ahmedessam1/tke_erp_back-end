@@ -41,4 +41,6 @@ interface ExportInvoiceRepository {
 
     // INVOICES PER USER SEARCH
     public function invoicesPerUserSearch($request);
+
+    public function updateProductSellingPriceInInvoice($product_row_id, $new_price);
 }

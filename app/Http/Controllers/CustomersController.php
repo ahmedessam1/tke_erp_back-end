@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Customer\CustomerAddBranchRequest;
 use App\Http\Requests\Customer\CustomersPaymentRequest;
 use App\Http\Requests\Customer\CustomerUpdateRequest;
+use App\Imports\CustomerProductList;
 use App\Repositories\Contracts\CustomerRepository;
 use App\Http\Requests\Customer\CustomerRequest;
 use App\Http\Requests\TableSearchRequest;
 use Illuminate\Http\Request;
 use Response;
+use Excel;
 
 class CustomersController extends Controller
 {
@@ -110,5 +112,34 @@ class CustomersController extends Controller
 
     public function paymentsShow ($payment_id) {
         return Response::json($this->model->paymentsShow($payment_id));
+    }
+
+
+    /* *********************************************
+     * *********** CUSTOMERS PRICE LIST ************
+     * *********************************************/
+    public function priceListCustomers(Request $request)
+    {
+        return Response::json($this->model->priceListCustomers($request->all()));
+    }
+
+    public function priceListCustomersSearch(TableSearchRequest $request)
+    {
+        return Response::json($this->model->priceListCustomersSearch($request->all()));
+    }
+
+    public function priceListAddProduct(Request $request)
+    {
+        $this->validate($request, [
+            'customer_id' => 'required|exists:customers,id',
+            'price_list_file' => 'required|mimes:xlsx,xls|'.'max:'.trans('validation_standards.images.file_size')
+        ]);
+        Excel::import(new CustomerProductList($request->customer_id), request()->file('price_list_file'));
+        return Response::json(true, 200);
+    }
+
+    protected function priceListExport(Request $request)
+    {
+        return Excel::download(new \App\Exports\CustomerProductList($request->customer_id), date('Y-mm-dd').'.xlsx');
     }
 }

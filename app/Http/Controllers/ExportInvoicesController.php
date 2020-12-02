@@ -69,4 +69,8 @@ class ExportInvoicesController extends Controller
     public function invoicesPerUserSearch (TableSearchRequest $request) {
         return Response::json($this->model->invoicesPerUserSearch($request->all()));
     }
+
+    public function updateProductSellingPriceInInvoice ($product_row_id, $new_price) {
+        return Response::json($this->model->updateProductSellingPriceInInvoice($product_row_id, $new_price));
+    }
 }

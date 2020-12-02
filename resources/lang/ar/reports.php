@@ -12,6 +12,7 @@ return [
             'TOTAL_QUANTITY' => 'رصيد الصنف',
             'AVG_PURCHASE_PRICE' => 'متوسط سعر الشراء',
             'TOTAL_CREDIT'  => 'قيمة المخزون',
+            'PRICE' => 'السعر',
         ]
     ]
 ];

@@ -9,7 +9,7 @@ use Maatwebsite\Excel\Facades\Excel;
 class ImportDataController extends Controller
 {
     public function productCredits (Request $request) {
-        Excel::import(new ProductCreditsImport,request()->file('file'));
+        Excel::import(new ProductCreditsImport, request()->file('file'));
 
         return $request;
     }

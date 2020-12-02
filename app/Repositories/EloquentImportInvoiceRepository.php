@@ -210,7 +210,7 @@ class EloquentImportInvoiceRepository implements ImportInvoiceRepository {
                 $product->purchase_price = $new_price;
                 $product->save();
                 // ADD PRODUCT NET PRICE TO INVOICE
-                $this->calculateSingleInvoice($invoice->id);
+                $this->calculateSingleImportInvoice($invoice->id);
 
                 // NEW INVOICE AFTER OBSERVERS
                 return $invoice;

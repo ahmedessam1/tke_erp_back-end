@@ -5,18 +5,20 @@ namespace App\Repositories;
 use App\Cache\RedisAdapter;
 use App\Events\TransactionHappened;
 use App\Models\Customer\CustomerBranch;
+use App\Models\Customer\CustomerPriceList;
 use App\Traits\Logic\InvoiceCalculations;
 use App\Repositories\Contracts\ExportInvoiceRepository;
 use App\Models\Invoices\ExportInvoice;
 use App\Traits\Data\GetCategoriesList;
 use App\Models\Product\SoldProducts;
 use App\Events\ActionHappened;
+use App\Traits\Observers\InvoiceObserversTrait;
 use Auth;
 use DB;
 
 class EloquentExportInvoiceRepository implements ExportInvoiceRepository
 {
-    use GetCategoriesList, InvoiceCalculations;
+    use GetCategoriesList, InvoiceCalculations, InvoiceObserversTrait;
 
     protected $cache;
 
@@ -57,7 +59,7 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
         $sorting = $this->setSorting($request['sort_by'], $request['sort_type']);
         $q = $request['query'];
 
-        return ExportInvoice::withCustomerBranch()->withSeller()->withCreatedByAndUpdatedBy()->orderedName()
+        return ExportInvoice::withCustomerBranch()->withSeller()->withCreatedByAndUpdatedBy()
             ->where($tax_conditions)
             ->where(function ($query) use ($tax_conditions, $q) {
                 $query->where('name', 'LIKE', '%' . $q . '%');
@@ -102,6 +104,9 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
                 ->where($tax_conditions)
                 ->find($export_invoice_id);
         }
+
+        // EDIT NAME AND BARCODE FROM CUSTOMER LIST IF EXISTS
+        $this->customerListEditData($export_invoice);
 
         return $export_invoice;
     }
@@ -276,6 +281,21 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
             ->paginate(30);
     }
 
+    public function updateProductSellingPriceInInvoice($product_row_id, $new_price) {
+        return DB::transaction(function() use ($product_row_id, $new_price) {
+            $product = SoldProducts::where('id', $product_row_id)->first();
+            $invoice = ExportInvoice::notApproved()->where('id', $product->export_invoice_id)->first();
+            if ($invoice) {
+                $product->sold_price = $new_price;
+                $product->save();
+                // ADD PRODUCT NET PRICE TO INVOICE
+                $this->calculateSingleExportInvoice($invoice->id);
+
+                // NEW INVOICE AFTER OBSERVERS
+                return $invoice;
+            }
+        });
+    }
 
     /*
      * **************************************************
@@ -290,5 +310,27 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
         if ($sort_type !== null)
             $sorting['sort_type'] = $sort_type;
         return $sorting;
+    }
+
+    private function customerListEditData($export_invoice)
+    {
+        if ($export_invoice) {
+            $products = $export_invoice->soldProducts;
+            $products_ids = $products->pluck('product_id')->toArray();
+            $products_from_customer_list = CustomerPriceList::where('customer_id', $export_invoice->customerBranch->customer->id)
+                ->whereIn('product_id', $products_ids)->get();
+            foreach($products as $key => $product) {
+                foreach($products_from_customer_list as $p_f_l) {
+                    if ($product->product_id === $p_f_l->product_id) {
+                        // ADDING PRODUCT NAME IF EXISTS
+                        if ($p_f_l->product_name !== null)
+                            $product->product->name = $p_f_l->product_name;
+                        // ADDING PRODUCT BARCODE IF EXISTS
+                        if ($p_f_l->product_barcode !== null)
+                            $product->product->barcode = $p_f_l->product_barcode;
+                    }
+                }
+            }
+        }
     }
 }

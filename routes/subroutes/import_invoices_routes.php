@@ -49,7 +49,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::patch('/{import_invoice_id}/approve', 'ImportInvoicesController@approve')
             -> name('approve')
             -> middleware(['role:super_admin']);
-        // UPDATE PRODUCT PURCHASE PRICE IN EXPORT_INVOICE
+        // UPDATE PRODUCT PURCHASE PRICE IN IMPORT_INVOICE
         Route::get('/update/purchase_price/{product_row_id}/{new_price}', 'ImportInvoicesController@updateProductPurchasePriceInInvoice')
             -> name('update_purchase_price')
             -> middleware(['role:super_admin']);

@@ -56,7 +56,7 @@ return [
             ],
             'max_number' => '6',
         ],
-        'file_size'  => '4048',
+        'file_size'  => '20000',
         'extensions' => 'jpg,png,jpeg,gif,svg,JPG,JPEG,PNG',
     ],
     // DISCOUNT

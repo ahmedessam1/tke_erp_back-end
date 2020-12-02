@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Cache\RedisAdapter;
 use App\Models\Customer\CustomerPayment;
+use App\Models\Customer\CustomerPriceList;
 use App\Repositories\Contracts\CustomerRepository;
 use App\Traits\Logic\CustomerCreditCalculations;
 use App\Traits\Logic\InvoiceCalculations;
@@ -291,6 +292,25 @@ class EloquentCustomerRepository implements CustomerRepository {
         return CustomerPayment::withMoneyCourier() -> withCustomer() -> find($payment_id);
     }
 
+
+    /* *********************************************
+     * ************** CUSTOMERS LIST ***************
+     * *********************************************/
+    // PRICE LIST CUSTOMERS
+    public function priceListCustomers ($request)
+    {
+        $customers_list_ids = CustomerPriceList::select('customer_id')->groupBy('customer_id')->pluck('customer_id')->toArray();
+        return Customer::whereIn('id', $customers_list_ids)->get();
+    }
+
+    public function priceListCustomersSearch ($request) {
+        $q = $request['query'];
+        $customers_list_ids = CustomerPriceList::select('customer_id')->groupBy('customer_id')->pluck('customer_id')->toArray();
+        return Customer::orderedName()
+            ->whereIn('id', $customers_list_ids)
+            ->where('name', 'LIKE', '%'.$q.'%')
+            ->paginate(30);
+    }
 
     /* *********************************************
     * ************** PRIVATE HELPERS **************

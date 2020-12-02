@@ -56,5 +56,9 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/per_user/search', 'ExportInvoicesController@invoicesPerUserSearch')
             -> name('per_user.search')
             -> middleware(['role:super_admin|sales']);
+        // UPDATE PRODUCT PURCHASE PRICE IN EXPORT_INVOICE
+        Route::get('/update/selling_price/{product_row_id}/{new_price}', 'ExportInvoicesController@updateProductSellingPriceInInvoice')
+            -> name('update_selling_price')
+            -> middleware(['role:super_admin']);
     });
 });

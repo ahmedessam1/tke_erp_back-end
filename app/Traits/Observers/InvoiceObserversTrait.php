@@ -2,6 +2,7 @@
 
 namespace App\Traits\Observers;
 
+use App\Models\Invoices\ExportInvoice;
 use App\Models\Invoices\ImportInvoice;
 
 trait InvoiceObserversTrait {
@@ -26,13 +27,27 @@ trait InvoiceObserversTrait {
         return;
     }
 
-    public function calculateSingleInvoice($invoice_id) {
+    public function calculateSingleImportInvoice($invoice_id) {
         $invoice = ImportInvoice::withProductCredits()->find($invoice_id);
         $credits = $invoice->productCredits;
         $total = 0;
         for($x = 0; $x < count($credits); $x++) {
             $percentage_value = ($credits[$x]->purchase_price * $credits[$x]->discount / 100) * $credits[$x]->quantity;
             $total += ($credits[$x]->purchase_price * $credits[$x]->quantity);
+            $total -= $percentage_value;
+        }
+        $invoice->net_total = $total;
+        $invoice->save();
+        return;
+    }
+
+    public function calculateSingleExportInvoice($invoice_id) {
+        $invoice = ExportInvoice::with('soldProducts')->find($invoice_id);
+        $credits = $invoice->soldProducts;
+        $total = 0;
+        for($x = 0; $x < count($credits); $x++) {
+            $percentage_value = ($credits[$x]->sold_price * $credits[$x]->discount / 100) * $credits[$x]->quantity;
+            $total += ($credits[$x]->sold_price * $credits[$x]->quantity);
             $total -= $percentage_value;
         }
         $invoice->net_total = $total;

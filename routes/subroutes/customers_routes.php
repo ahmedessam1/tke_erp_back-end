@@ -96,5 +96,23 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/payments/show/{payment_id}', 'CustomersController@paymentsShow')
             -> name('payments.show')
             -> middleware(['role:super_admin']);
+
+
+        /* *********************************************
+         * *************** CUSTOMER LIST ***************
+         * *********************************************/
+        Route::get('/price_list/customers', 'CustomersController@priceListCustomers')
+            -> name('price_list.customers')
+            -> middleware(['role:super_admin']);
+        // PRICE LIST CUSTOMERS SEARCH
+        Route::get('/price_list/customers/search', 'CustomersController@priceListCustomersSearch')
+            -> name('price_list.customers.search')
+            -> middleware(['role:super_admin']);
+        Route::post('/price_list/add_product', 'CustomersController@priceListAddProduct')
+            -> name('price_list.add_product')
+            -> middleware(['role:super_admin']);
+        Route::get('/price_list/export', 'CustomersController@priceListExport')
+            -> name('price_list.add_product')
+            -> middleware(['role:super_admin']);
     });
 });

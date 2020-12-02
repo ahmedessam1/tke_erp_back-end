@@ -71,4 +71,11 @@ interface CustomerRepository {
 
     // PAYMENTS SHOW
     public function paymentsShow($payment_id);
+
+
+    /************************************
+     * ********* CUSTOMERS LIST *********
+     ***********************************/
+    public function priceListCustomers($request);
+    public function priceListCustomersSearch($request);
 }
