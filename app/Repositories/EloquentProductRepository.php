@@ -46,7 +46,11 @@ class EloquentProductRepository implements ProductRepository
 
     public function getProductsSearchResult($q, $category_id)
     {
-        $query = Product::search($q);
+        if (strlen($q) > 7 && is_numeric($q))
+            $query = Product::where('barcode', 'LIKE', '%' . $q . '%');
+        else
+            $query = Product::search($q);
+
         if ($category_id !== null)
             $query->where('category_id', (int) $category_id);
         $products = $query->paginate(30);

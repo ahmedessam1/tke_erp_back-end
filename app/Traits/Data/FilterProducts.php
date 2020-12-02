@@ -41,7 +41,7 @@ trait FilterProducts
         $customer_id = $invoice->customerBranch->customer->id;
 
         // SEARCH EXACTLY IF BARCODE INSERTED
-        if (strlen($q) > 5 && is_numeric($q))
+        if (strlen($q) > 7 && is_numeric($q))
             $condition_queries = Product::where('barcode', 'LIKE', '%' . $q . '%');
         else
             $condition_queries = Product::search($q);
