@@ -10,7 +10,7 @@ trait FilterProducts
 {
     protected function categorySubcategoryProductsFiltering($category_id, $subcategories_id, $q, $type, $invoice_id)
     {
-        if ($type !== 'selling' && $invoice_id) {
+        if ($type !== 'selling') {
             return $this->getOriginalProductsInfo($category_id, $subcategories_id, $q);
         } else {
             return $this->getCustomerListProductsInfo($category_id, $subcategories_id, $q, $invoice_id);
