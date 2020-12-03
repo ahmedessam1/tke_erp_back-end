@@ -34,12 +34,12 @@ class InvoiceProductsStoreRequest extends FormRequest
                 'required',
                 'integer',
                 'min:'.trans('validation_standards.quantity.min'),
-                new QuantityMinValue(
-                    $this -> invoice_id,
-                    $this -> product_id,
-                    $this -> quantity,
-                    $this -> _method
-                ),
+//                new QuantityMinValue(
+//                    $this -> invoice_id,
+//                    $this -> product_id,
+//                    $this -> quantity,
+//                    $this -> _method
+//                ),
             ],
             'sold_price' => [
                 'required',

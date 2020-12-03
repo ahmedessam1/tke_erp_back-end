@@ -26,7 +26,7 @@ class CustomerProductList implements FromCollection, WithMapping, WithHeadings, 
     */
     public function collection()
     {
-        return CustomerPriceList::all();
+        return CustomerPriceList::where('customer_id', $this->customer_id)->get();
     }
 
     public function map($products): array
