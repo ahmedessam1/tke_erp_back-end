@@ -136,6 +136,7 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
 
             // ADDING SOLD PRODUCT
             SoldProducts::create([
+                "sequence_number" => $request->sequence_number,
                 "export_invoice_id" => $invoice->id,
                 "product_id" => $request->product_id,
                 "quantity" => $request->quantity,

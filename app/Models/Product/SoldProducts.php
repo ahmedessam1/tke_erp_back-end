@@ -15,6 +15,7 @@ class SoldProducts extends Model
 
     // FILLABLE
     protected $fillable = [
+        'sequence_number',
         'export_invoice_id',
         'product_id',
         'quantity',

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\ExportInvoices;
 
+use App\Rules\ExportInvoices\InvoiceProductSequanceNumber;
 use App\Rules\ExportInvoices\QuantityMinValue;
 use App\Rules\ExportInvoices\SellingPriceMin;
 use Illuminate\Foundation\Http\FormRequest;
@@ -27,6 +28,8 @@ class InvoiceProductsStoreRequest extends FormRequest
     {
         return [
             'invoice_id' => 'required|exists:export_invoices,id',
+
+            'sequence_number' => ['required', new InvoiceProductSequanceNumber($this->invoice_id, $this->sequence_number)],
 
             // SOLD PRODUCTS VALIDATION
             'product_id' => 'required|exists:products,id',
@@ -80,7 +83,8 @@ class InvoiceProductsStoreRequest extends FormRequest
             'sold_price.required' => trans('form_responses.export_invoices_validation.sold_price.required'),
             'sold_price.numeric'  => trans('form_responses.export_invoices_validation.sold_price.numeric'),
 
-
+            // SEQUENCE NUMBER
+            'sequence_number.required' => trans('form_responses.export_invoices_validation.sequence_number.required'),
         ];
     }
 
