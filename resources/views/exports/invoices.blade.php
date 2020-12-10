@@ -2,6 +2,7 @@
     <thead>
     {{--BASIC INFO--}}
     <tr>
+        <th>{{ $invoices[0]->number }}</th>
         <th dir="rtl" style="font-size: 20px">
             @if($invoices[0] -> approve)
                 <b>@lang('excel.invoices.approved')</b>
@@ -9,7 +10,6 @@
                 <b>@lang('excel.invoices.not_approved')</b>
             @endif
         </th>
-        <th></th>
         <th></th>
         <th></th>
         <th></th>
@@ -29,15 +29,24 @@
             @endif
         </th>
     </tr>
+
     {{--DISCOUNT--}}
     <tr>
+        <th>
+            @if($type === 'exports')
+                @lang('excel.invoices.export_invoices.title')
+            @elseif($type === 'imports')
+                @lang('excel.invoices.import_invoices.title')
+            @elseif($type === 'refunds')
+                @lang('excel.invoices.refund_invoices.title')
+            @endif
+        </th>
         <th></th>
         <th></th>
         <th></th>
         <th></th>
-        <th></th>
-        <th style="font-size: 16px">
-            @lang('excel.invoices.discount'):
+        <th dir="rtl" style="font-size: 20px">
+            @lang('excel.invoices.discount')
             @if($invoices[0] -> discount)
                 {{ $invoices[0] -> discount }}%
             @else
@@ -45,46 +54,64 @@
             @endif
         </th>
     </tr>
+
     {{--TAX--}}
     <tr>
+        <th>{{ \Carbon\Carbon::parse($invoices[0]->date)->format('d-m-Y') }}</th>
         <th></th>
         <th></th>
         <th></th>
         <th></th>
-        <th></th>
-        <th style="font-size: 16px">
-            @lang('excel.invoices.tax'):
+        <th dir="rtl" style="font-size: 20px">
+            @lang('excel.invoices.tax')
             @if($invoices[0] -> tax)
-                14%
+                14
             @else
-                0%
+                0
+            @endif
+            %
+        </th>
+    </tr>
+
+    {{--NET_TOTAL--}}
+    <tr>
+        <th>
+            @if($type === 'exports')
+                {{ $invoices[0]->customerBranch->customer->name }}
+            @elseif($type === 'imports')
+                {{ $invoices[0]->supplier->name }}
             @endif
         </th>
-    </tr>
-    <tr>
-        <th></th>
         <th></th>
         <th></th>
         <th></th>
         <th></th>
         <th dir="rtl" style="font-size: 20px">
-            @lang('excel.invoices.total_before_discount')
-            {{ round($invoices[0] -> net_total) }}
+            @lang('excel.invoices.net_total')
+            {{ round($invoices[0]->net_total, 2) }}
             @lang('excel.currency')
         </th>
     </tr>
+
+    {{-- DISCOUNT_AMOUNT --}}
     <tr>
-        <th></th>
+        <th>
+            @if($invoices[0]->customerBranch)
+                {{ $invoices[0]->customerBranch->address }}
+            @endif
+        </th>
         <th></th>
         <th></th>
         <th></th>
         <th></th>
         <th dir="rtl" style="font-size: 20px">
-            @lang('excel.invoices.total_after_discount')
-            {{ round($invoices[0] -> total_after_discount) }}
+            @lang('excel.invoices.discount_amount')
+            {{ round($invoices[0]->net_total - ($invoices[0]->net_total * ((100 - $invoices[0]->discount) / 100)), 2) }}
             @lang('excel.currency')
         </th>
     </tr>
+
+    {{-- TAX_AMOUNT --}}
     <tr>
         <th></th>
         <th></th>
@@ -92,17 +119,31 @@
         <th></th>
         <th></th>
         <th dir="rtl" style="font-size: 20px">
-            @lang('excel.invoices.total_after_tax')
-            {{ round($invoices[0] -> total_after_tax) }}
+            @lang('excel.invoices.tax_amount')
+            @if($invoices[0]->tax)
+                {{ round(($invoices[0]->net_total * ((100 + 14) / 100)) - $invoices[0]->net_total, 2) }}
+            @else
+                0
+            @endif
+            @lang('excel.currency')
+        </th>
+    </tr>
+
+    {{-- TOTAL --}}
+    <tr>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th></th>
+        <th dir="rtl" style="font-size: 20px">
+            @lang('excel.invoices.total')
+            {{ round($invoices[0]->total_after_tax, 2) }}
             @lang('excel.currency')
         </th>
     </tr>
     </thead>
-</table>
 
-
-<table class="table">
-    <thead>
     <tr>
         @if($type === 'exports')
             <th style="font-size: 16px; text-align: center">
@@ -145,7 +186,6 @@
                 <b>@lang('excel.invoices.refund_invoices.products_table.name')</b></th>
         @endif
     </tr>
-    </thead>
 
     <tbody>
     @foreach($invoices as $invoice)

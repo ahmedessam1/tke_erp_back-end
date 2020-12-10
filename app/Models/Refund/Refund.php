@@ -7,6 +7,7 @@ use App\Traits\Eloquent\Sorting;
 use App\Traits\Eloquent\Status;
 use App\Traits\Eloquent\User;
 use App\Traits\Logic\InvoiceCalculations;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -66,7 +67,7 @@ class Refund extends Model
         else
             $refund_to = $this->supplier->name;
 
-        return '#' . $this->number . ' - ' . $this->title . ' - (' . $this->date . ')'
+        return '#' . $this->number . ' - ' . $this->title . ' - (' . Carbon::parse($this->date)->format('d-m-Y') . ')'
             . ' - ' . $refund_to;
     }
 
@@ -102,5 +103,9 @@ class Refund extends Model
 
     public function scopeWithRefundedProducts ($builder) {
         return $builder -> with('refundedProducts');
+    }
+
+    public function scopeWithRefundedProductsImages ($builder) {
+        return $builder -> with('refundedProducts.product.images');
     }
 }

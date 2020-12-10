@@ -7,10 +7,13 @@ use App\Events\ActionHappened;
 use App\Models\Refund\RefundProduct;
 use App\Repositories\Contracts\RefundRepository;
 use App\Models\Refund\Refund;
+use App\Traits\Logic\InvoiceCalculations;
 use Auth;
 use DB;
 
 class EloquentRefundRepository implements RefundRepository {
+    use InvoiceCalculations;
+
     protected $cache;
     public function __construct()
     {
@@ -89,10 +92,13 @@ class EloquentRefundRepository implements RefundRepository {
             $tax_conditions = ['tax' => '1'];
 
         $refund = Refund::where($tax_conditions)->find($refund_id);
-        if ($refund->type === 'in')
-            return Refund::withRefundedProducts()->withCustomer()->find($refund->id);
-        else
-            return Refund::withRefundedProducts()->withSupplier()->find($refund->id);
+        if ($refund->type === 'in') {
+            $invoice = Refund::withRefundedProductsImages()->withCustomer()->find($refund->id);
+            $this->customerListEditData($invoice, 'refund_in');
+        } else
+            $invoice = Refund::withRefundedProductsImages()->withSupplier()->find($refund->id);
+
+        return $invoice;
     }
 
     public function storeRefundOrder ($request) {

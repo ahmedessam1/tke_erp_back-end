@@ -5,11 +5,12 @@ return [
     'invoices' => [
         'approved' => 'مرحلة',
         'not_approved' => 'غير مرحلة',
-        'total_before_discount' => 'الاجمالي قبل الخصم و الضريبة:',
-        'total_after_discount' => 'الاجمالي قبل الضريبة وبعد الخصم:',
-        'total_after_tax' => 'صافي الاجمالي:',
-        'discount' => 'الخصم',
-        'tax' => 'الضريبة',
+        'net_total' => 'اجمالي الفاتورة:',
+        'discount_amount' => 'مضاف خصم علي الفاتورة:',
+        'tax_amount' => 'مضاف ضريبة علي الفاتورة:',
+        'total' => 'صافي اجمالي الفاتورة:',
+        'discount' => 'الخصم:',
+        'tax' => 'الضريبة:',
         'export_invoices' => [
             'title' => 'فاتورة بيع',
             'products_table' => [
@@ -33,7 +34,7 @@ return [
             ],
         ],
         'refund_invoices' => [
-            'title' => 'امر مرتحجع',
+            'title' => 'امر مرتجع',
             'products_table' => [
                 'name' => 'الصنف',
                 'code' => 'الكود',

@@ -106,7 +106,7 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
         }
 
         // EDIT NAME AND BARCODE FROM CUSTOMER LIST IF EXISTS
-        $this->customerListEditData($export_invoice);
+        $this->customerListEditData($export_invoice, 'selling');
 
         return $export_invoice;
     }
@@ -311,27 +311,5 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
         if ($sort_type !== null)
             $sorting['sort_type'] = $sort_type;
         return $sorting;
-    }
-
-    private function customerListEditData($export_invoice)
-    {
-        if ($export_invoice) {
-            $products = $export_invoice->soldProducts;
-            $products_ids = $products->pluck('product_id')->toArray();
-            $products_from_customer_list = CustomerPriceList::where('customer_id', $export_invoice->customerBranch->customer->id)
-                ->whereIn('product_id', $products_ids)->get();
-            foreach($products as $key => $product) {
-                foreach($products_from_customer_list as $p_f_l) {
-                    if ($product->product_id === $p_f_l->product_id) {
-                        // ADDING PRODUCT NAME IF EXISTS
-                        if ($p_f_l->product_name !== null)
-                            $product->product->name = $p_f_l->product_name;
-                        // ADDING PRODUCT BARCODE IF EXISTS
-                        if ($p_f_l->product_barcode !== null)
-                            $product->product->barcode = $p_f_l->product_barcode;
-                    }
-                }
-            }
-        }
     }
 }

@@ -5,6 +5,7 @@ namespace App\Models\Invoices;
 use App\Observers\Invoice\ImportInvoiceObserver;
 use App\Traits\Eloquent\Status;
 use App\Traits\Logic\InvoiceCalculations;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\Eloquent\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -29,7 +30,7 @@ class ImportInvoice extends Model
     // MUTATORS
     public function getTitleAttribute()
     {
-        return '#' . $this->number . ' - ' . $this->name . ' - (' . $this->date  . ')'
+        return '#' . $this->number . ' - ' . $this->name . ' - (' . Carbon::parse($this->date)->format('d-m-Y')  . ')'
         . ' - ' . $this->supplier->name;
     }
 

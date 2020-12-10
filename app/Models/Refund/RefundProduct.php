@@ -17,13 +17,14 @@ class RefundProduct extends Model
     ];
 
     // APPENDS
-    protected $appends = ['product', 'item_net_price'];
+    protected $appends = ['item_net_price'];
 
     // DATES
     protected $dates = ['deleted_at'];
 
     // REGISTER OBSERVER
-    public static function boot() {
+    public static function boot()
+    {
         parent::boot();
         RefundProduct::observe(new RefundProductObserver());
     }
@@ -33,17 +34,19 @@ class RefundProduct extends Model
      * Users.php trait contain:
      * created_by and Updated_by relationships
      */
-    public function refundOrder () {
-        return $this -> belongsTo('App\Models\Refund\Refund', 'refund_id');
+    public function refundOrder()
+    {
+        return $this->belongsTo('App\Models\Refund\Refund', 'refund_id');
     }
 
-    // MUTATORS
-    public function getProductAttribute() {
-        return Product::withImages() -> find($this -> product_id);
+    public function product()
+    {
+        return $this->belongsTo('App\Models\Product\Product')->with('category')->withTrashed();
     }
 
     // SINGLE ITEM NET PRICE
-    public function getItemNetPriceAttribute() {
+    public function getItemNetPriceAttribute()
+    {
         // PRODUCT SOLD PRICE AND DISCOUNT
         $refund_price = $this->price;
         $discount = $this->discount;
@@ -58,7 +61,8 @@ class RefundProduct extends Model
         return $this->attributes['item_net_price'] = $value;
     }
 
-    private function calculateNetPrice($sold_price, $discount, $tax, $invoice_discount, $quantity, $company_tax) {
+    private function calculateNetPrice($sold_price, $discount, $tax, $invoice_discount, $quantity, $company_tax)
+    {
         // CALCULATE DISCOUNT
         $sold_price = $sold_price * $quantity;
         $discount_value = $sold_price * $discount / 100;
@@ -78,5 +82,8 @@ class RefundProduct extends Model
     }
 
     // SCOPES
-
+    public function scopeWithProduct($builder)
+    {
+        return $builder->with('product');
+    }
 }

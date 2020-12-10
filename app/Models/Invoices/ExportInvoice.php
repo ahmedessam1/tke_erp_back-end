@@ -7,6 +7,7 @@ use App\Traits\Eloquent\Sorting;
 use App\Traits\Eloquent\Status;
 use App\Traits\Eloquent\User;
 use App\Traits\Logic\InvoiceCalculations;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -59,7 +60,7 @@ class ExportInvoice extends Model
     // MUTATORS
     public function getTitleAttribute()
     {
-        $title = '#' . $this->number . ' - ' . $this->name . ' - (' . $this->date . ')';
+        $title = '#' . $this->number . ' - ' . $this->name . ' - (' . Carbon::parse($this->date)->format('d-m-Y') . ')';
         if ($this->customerBranch)
             $title .= ' - ' . $this->customerBranch->customer->name . '  (' . $this->customerBranch->address . ')';
         return $title;
