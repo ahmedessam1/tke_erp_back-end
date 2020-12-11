@@ -252,8 +252,6 @@ class EloquentReportSalesRepository implements ReportSalesRepository
 
     public function sellersProgress($year, $seller_id, $types)
     {
-        // TODO: REMOVE THIS LINE
-        $this->cache->forget('sellers_progress_report:' . implode(':', $types) . $seller_id . $year);
         if (Auth::user()->hasRole(['sales']))
             $seller_id = $this->getAuthUserId();
         $result = $this->cache->remember('sellers_progress_report:' . implode(':', $types) . $seller_id . $year,
