@@ -5,14 +5,14 @@ namespace App;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
-use App\Traits\Eloquent\ActiveStatus;
+use App\Traits\Eloquent\SellersProgress;
 use Laravel\Passport\HasApiTokens;
 use App\Traits\Eloquent\Sorting;
 use Auth;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, Notifiable, HasRoles, ActiveStatus, Sorting;
+    use HasApiTokens, Notifiable, HasRoles, Sorting;
 
     /**
      * The attributes that are mass assignable.

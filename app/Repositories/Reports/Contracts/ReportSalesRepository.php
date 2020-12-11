@@ -65,5 +65,5 @@ interface ReportSalesRepository {
      * @param $type
      * @return mixed
      */
-    public function sellersProgress($year, $sellers_id, $type);
+    public function sellersProgress($year, $seller_id, $type);
 }

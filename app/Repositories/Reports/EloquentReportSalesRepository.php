@@ -6,13 +6,14 @@ use App\Cache\RedisAdapter;
 use App\Exports\CustomersStatementExport;
 use App\Models\Customer\Customer;
 use App\Models\Customer\CustomerBranch;
-use App\Models\Customer\CustomerBranchesSellers;
 use App\Models\Customer\CustomerInitiatoryCredit;
 use App\Models\Customer\CustomerPayment;
 use App\Models\Invoices\ExportInvoice;
 use App\Models\Product\SoldProducts;
 use App\Models\Refund\Refund;
 use App\Repositories\Reports\Contracts\ReportSalesRepository;
+use App\Traits\Repository\Reports\Sales\SalesPerPeriod;
+use App\Traits\Repository\Reports\Sales\SellersProgress;
 use App\User;
 use Excel;
 use Auth;
@@ -20,6 +21,7 @@ use DB;
 
 class EloquentReportSalesRepository implements ReportSalesRepository
 {
+    use SellersProgress, SalesPerPeriod;
     protected $cache;
 
     public function __construct()
@@ -248,35 +250,37 @@ class EloquentReportSalesRepository implements ReportSalesRepository
             trans('excel.customers_statement.excel_file_name') . ' (' . $from_date . '~~' . $to_date . ').xlsx');
     }
 
-    public function sellersProgress($year, $sellers_id, $types)
+    public function sellersProgress($year, $seller_id, $types)
     {
+        // TODO: REMOVE THIS LINE
+        $this->cache->forget('sellers_progress_report:' . implode(':', $types) . $seller_id . $year);
         if (Auth::user()->hasRole(['sales']))
-            $sellers_id = [$this->getAuthUserId()];
-        $result = $this->cache->remember('sellers_progress_report:' . implode(':', $types) . implode(':', $sellers_id) . $year,
-            function () use ($year, $sellers_id, $types) {
+            $seller_id = $this->getAuthUserId();
+        $result = $this->cache->remember('sellers_progress_report:' . implode(':', $types) . $seller_id . $year,
+            function () use ($year, $seller_id, $types) {
                 $data = [];
+                // GET SELLER NAME
+                $seller_name = User::find($seller_id)->name;
 
-                for ($i = 0; $i < count($sellers_id); $i++) {
-                    // GET SELLER NAME
-                    $seller_name = User::find($sellers_id[$i])->name;
+                // GET SALES, REFUNDS AND PROFIT
+                $sales_invoices = [];
+                $refunds_invoices = [];
 
-                    // GET SALES, REFUNDS AND PROFIT
-                    $sales_invoices = [];
-                    $refunds_invoices = [];
+                if (in_array('sales', $types))
+                    $sales_invoices = $this->sellerInvoices($seller_id, $year, 'sales');
+                else if (in_array('refunds', $types))
+                    $refunds_invoices = $this->sellerInvoices($seller_id, $year, 'refunds');
 
-                    if (in_array('sales', $types))
-                        $sales_invoices = $this->sellerInvoices($sellers_id[$i], $year, 'sales');
-                    else if (in_array('refunds', $types))
-                        $refunds_invoices = $this->sellerInvoices($sellers_id[$i], $year, 'refunds');
-
-                    array_push($data, [
-                        'seller' => $seller_name,
-                        'data' => $this->getSellerProgress($sellers_id[$i], $year, $types),
-                        'sales_invoices' => $sales_invoices,
-                        'refunds_invoices' => $refunds_invoices,
-                        'customers_progress_percentage' => $this->getSellerProgressPerCustomerPercentage($sales_invoices),
-                    ]);
-                }
+                array_push($data, [
+                    'seller' => $seller_name,
+                    'data' => $this->getSellerProgress($seller_id, $year, $types),
+                    'sales_invoices' => $sales_invoices,
+                    'refunds_invoices' => $refunds_invoices,
+                    'customers_progress_percentage' => $this->getSellerProgressPerCustomerPercentage($sales_invoices),
+                    'branches_sales' => $this->getSellerProgressBranchesSalesAndRefunds($seller_id, $year, ['sales']),
+                    'branches_refunds' => $this->getSellerProgressBranchesSalesAndRefunds($seller_id, $year, ['refunds']),
+                    'branches_profit' => $this->getSellerProgressBranchesSalesAndRefunds($seller_id, $year, ['sales', 'refunds']),
+                ]);
 
                 return json_encode($data);
             }, config('constants.cache_expiry_minutes'));
@@ -288,99 +292,8 @@ class EloquentReportSalesRepository implements ReportSalesRepository
      * ********** PRIVATE HELPERS FUNCTIONS *************
      * **************************************************
      */
-    /**
-     * @param $customer_branch_ids
-     * @param $year
-     * @param $types
-     * @return array
-     */
-    private function getMonthsSalesForCustomerBranch($customer_branch_ids, $year, $types)
-    {
-        $month_and_sum = [];
-        $counter = count($customer_branch_ids);
 
-        for ($i = 0; $i < $counter; $i++) {
-            $holder = [];
 
-            for ($x = 0; $x < 12; $x++) {
-                $sum = 0;
-                $customer = CustomerBranch::find($customer_branch_ids[$i])->customer_and_branch;
-
-                if (in_array('sales', $types)) {
-                    $data = ExportInvoice::withCustomerBranch()
-                        ->where('customer_branch_id', $customer_branch_ids[$i])
-                        ->approved()
-                        ->whereYear('date', $year)
-                        ->whereMonth('date', $x + 1)
-                        ->get();
-
-                    $customer = CustomerBranch::find($customer_branch_ids[$i])->customer_and_branch;
-                    foreach ($data as $d)
-                        $sum += $d->total_after_tax;
-                }
-
-                if (in_array('refunds', $types)) {
-                    $data = Refund::approved()
-                        ->where('model_id', $customer_branch_ids[$i])
-                        ->where('type', 'in')
-                        ->whereYear('date', $year)
-                        ->whereMonth('date', $x + 1)
-                        ->get();
-
-                    foreach ($data as $d)
-                        $sum -= $d->total_after_tax;
-                }
-
-                array_push($holder, [
-                    'sum' => round($sum),
-                    'customer' => $customer,
-                ]);
-            }
-            array_push($month_and_sum, $holder);
-        }
-
-        return $month_and_sum;
-    }
-
-    /**
-     * @param $years
-     * @param $y
-     * @param $i
-     * @return int
-     */
-    private function calculateYearlySales($years, $y, $i)
-    {
-        $sum = 0;
-        $export_invoices = ExportInvoice::approved()
-            ->whereYear('date', $years[$y])
-            ->whereMonth('date', $i)
-            ->orderBy('number')
-            ->get();
-        foreach ($export_invoices as $invoice)
-            $sum += $invoice->total_after_tax;
-        return $sum;
-    }
-
-    /**
-     * @param $years
-     * @param $y
-     * @param $i
-     * @param $type
-     * @return int
-     */
-    private function calculateYearlyRefunds($years, $y, $i, $type)
-    {
-        $sum = 0;
-        $refund_invoices = Refund::approved()
-            ->where('type', $type)
-            ->whereYear('date', $years[$y])
-            ->whereMonth('date', $i)
-            ->orderBy('number')
-            ->get();
-        foreach ($refund_invoices as $invoice)
-            $sum += $invoice->total_after_tax;
-        return $sum;
-    }
 
     /**
      * @param $array
@@ -394,110 +307,5 @@ class EloquentReportSalesRepository implements ReportSalesRepository
             $reference_array[$key] = $row[$column];
 
         array_multisort($reference_array, SORT_ASC, $array);
-    }
-
-    /**
-     * @param $branches_id
-     * @param $year
-     * @param $types
-     * @return array
-     */
-    private function getSellerProgress($seller_id, $year, $types)
-    {
-        $sum = [];
-        for ($i = 0; $i < 12; $i++) {
-            $monthly_sum = 0;
-            if (in_array('sales', $types)) {
-                $monthly_sum += ExportInvoice::where('seller_id', $seller_id)
-                    ->approved()
-                    ->whereYear('date', $year)
-                    ->whereMonth('date', $i + 1)
-                    ->sum('net_total');
-            }
-
-            if (in_array('refunds', $types)) {
-                $monthly_sum -= Refund::where('assigned_user_id', $seller_id)
-                    ->approved()
-                    ->whereYear('date', $year)
-                    ->whereMonth('date', $i + 1)
-                    ->sum('net_total');
-            }
-
-            array_push($sum, $monthly_sum);
-        }
-        return $sum;
-    }
-
-    /**
-     * @param $seller_id
-     * @param $year
-     * @param $type
-     * @return array
-     */
-    private function sellerInvoices($seller_id, $year, $type)
-    {
-        $invoices = [];
-        for ($i = 0; $i < 12; $i++) {
-            if ($type === 'sales') {
-                $invoice = ExportInvoice::withCustomerBranch()
-                    ->withSeller()
-                    ->where('seller_id', $seller_id)
-                    ->approved()
-                    ->whereYear('date', $year)
-                    ->whereMonth('date', $i + 1)
-                    ->get();
-                array_push($invoices, $invoice);
-            } else if ($type === 'refunds') {
-                $invoice = Refund::where('assigned_user_id', $seller_id)
-                    ->approved()
-                    ->whereYear('date', $year)
-                    ->whereMonth('date', $i + 1)
-                    ->get();
-                array_push($invoices, $invoice);
-            }
-        }
-        return $invoices;
-    }
-
-    /**
-     * @param $sales_invoices
-     * @return array
-     */
-    private function getSellerProgressPerCustomerPercentage($sales_invoices) {
-        $holder = [];
-        $total_sales = 0;
-        foreach($sales_invoices as $sales_invoice) {
-            foreach($sales_invoice as $s_i) {
-                $total_sales += $s_i->net_total;
-                $customer = $s_i->customerBranch;
-                array_push($holder, [
-                    'customer_id' => $customer->customer_id,
-                    'customer_name' => $customer->customer->name,
-                    'sales_total' => $s_i->net_total,
-                ]);
-            }
-        }
-
-        $result = [];
-        foreach($holder as $k => $v) {
-            $id = $v['customer_id'];
-            $result[$id]['customer_name'] = $v['customer_name'];
-            $result[$id]['calculations'][] = $v['sales_total'];
-        }
-        $sorted_result = [];
-        foreach($result as $key => $value) {
-            $sorted_result[] = [
-                'customer_id' => $key, 'total_sales' => $total_sales,
-                'customer_name' => $value['customer_name'], 'sales_total' => array_sum($value['calculations'])
-            ];
-        }
-
-        for($i = 0; $i < count($sorted_result); $i++) {
-            $number = $sorted_result[$i]['sales_total'];
-            $percentage = ($number*100)/$total_sales;
-            $sorted_result[$i]['percentage'] = round($percentage, 2);
-        }
-
-        return $sorted_result;
     }
 }
