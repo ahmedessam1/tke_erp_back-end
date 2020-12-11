@@ -65,11 +65,10 @@
         <th dir="rtl" style="font-size: 20px">
             @lang('excel.invoices.tax')
             @if($invoices[0] -> tax)
-                14
+                14%
             @else
-                0
+                0%
             @endif
-            %
         </th>
     </tr>
 
@@ -80,6 +79,12 @@
                 {{ $invoices[0]->customerBranch->customer->name }}
             @elseif($type === 'imports')
                 {{ $invoices[0]->supplier->name }}
+            @elseif($type ===  'refunds')
+                @if($invoices[0]->type === 'in')
+                    {{ $invoices[0]->customerBranch->customer->name }}
+                @elseif($invoices[0]->type === 'out')
+                    {{ $invoices[0]->supplier->name }}
+                @endif
             @endif
         </th>
         <th></th>
@@ -96,8 +101,16 @@
     {{-- DISCOUNT_AMOUNT --}}
     <tr>
         <th>
-            @if($invoices[0]->customerBranch)
+            @if($type === 'exports')
                 {{ $invoices[0]->customerBranch->address }}
+            @elseif($type === 'imports')
+                {{ $invoices[0]->supplier->addresses[0]->address }}
+            @elseif($type ===  'refunds')
+                @if($invoices[0]->type === 'in')
+                    {{ $invoices[0]->customerBranch->address }}
+                @elseif($invoices[0]->type === 'out')
+                    {{ $invoices[0]->supplier->addresses[0]->address }}
+                @endif
             @endif
         </th>
         <th></th>
