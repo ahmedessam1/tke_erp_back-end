@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Expenses\ExpensesTypes;
 use App\Repositories\Contracts\RequirementRepository;
 use App\Traits\Data\GetProductDismissReasonsList;
 use App\Traits\Data\GetPaymentTypesList;
@@ -13,7 +14,8 @@ use App\Traits\Data\GetUsersList;
 use App\Traits\Data\GetWarehousesList;
 use Auth;
 
-class EloquentRequirementRepository implements RequirementRepository {
+class EloquentRequirementRepository implements RequirementRepository
+{
     use GetPaymentTypesList,
         GetSuppliersList,
         GetPositionsList,
@@ -23,58 +25,73 @@ class EloquentRequirementRepository implements RequirementRepository {
         GetProductDismissReasonsList,
         GetWarehousesList;
 
-    private function getAuthUserId() {
-        return Auth::user() -> id;
+    private function getAuthUserId()
+    {
+        return Auth::user()->id;
     }
 
-    public function users () {
+    public function users()
+    {
         if (Auth::user()->hasRole(['super_admin', 'accountant']))
             return $this->getUsersListOrderedByName();
         else
             return $this->getLoggedUserName();
     }
 
-    public function paymentTypes () {
-        return $this -> getPaymentTypesListOrderedByName();
+    public function paymentTypes()
+    {
+        return $this->getPaymentTypesListOrderedByName();
     }
 
-    public function suppliers () {
-        return $this -> getSuppliersListOrderedByName();
+    public function suppliers()
+    {
+        return $this->getSuppliersListOrderedByName();
     }
 
-    public function positions () {
-        return $this -> getPositionsListOrderedByName();
+    public function positions()
+    {
+        return $this->getPositionsListOrderedByName();
     }
 
-    public function categories () {
-        return $this -> getCategoriesListOrderedByName();
+    public function categories()
+    {
+        return $this->getCategoriesListOrderedByName();
     }
 
-    public function warehouses () {
-        return $this -> getWarehousesListOrderedByName();
+    public function warehouses()
+    {
+        return $this->getWarehousesListOrderedByName();
     }
 
-    public function customers () {
+    public function customers()
+    {
         $user = Auth::user();
         if ($user->hasRole(['super_admin', 'accountant']))
-            return $this -> getCustomersListOrderedByName();
+            return $this->getCustomersListOrderedByName();
         else if ($user->hasRole(['super_admin', 'sales']))
-            return $this -> getCustomersListPerUserOrderedByName();
+            return $this->getCustomersListPerUserOrderedByName();
         else
             return 403;
     }
 
-    public function customersBranches () {
+    public function customersBranches()
+    {
         $user = Auth::user();
         if ($user->hasRole(['super_admin', 'accountant']))
-            return $this -> getCustomersBranchesListOrderedByName();
+            return $this->getCustomersBranchesListOrderedByName();
         else if ($user->hasRole(['super_admin', 'sales']))
-            return $this -> getCustomersBranchesListPerUserOrderedByName();
+            return $this->getCustomersBranchesListPerUserOrderedByName();
         else
             return 403;
     }
 
-    public function productDismissReasons () {
-        return $this -> getProductDismissReasonsListOrderedByReason();
+    public function productDismissReasons()
+    {
+        return $this->getProductDismissReasonsListOrderedByReason();
+    }
+
+    public function expensesTypes()
+    {
+        return ExpensesTypes::orderBy('type', 'ASC') -> pluck('type', 'id');
     }
 }

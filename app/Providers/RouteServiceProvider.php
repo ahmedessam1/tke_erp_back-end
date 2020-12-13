@@ -89,6 +89,7 @@ class RouteServiceProvider extends ServiceProvider
             require base_path('routes/subroutes/export_invoices_routes.php');
             require base_path('routes/subroutes/refunds_routes.php');
             require base_path('routes/subroutes/product_dismiss_orders_routes.php');
+            require base_path('routes/subroutes/expenses_routes.php');
 
             // EXCELS
             require base_path('routes/subroutes/exports/exports_invoices_routes.php');

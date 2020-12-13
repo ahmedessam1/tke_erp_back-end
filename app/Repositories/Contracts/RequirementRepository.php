@@ -29,4 +29,7 @@ interface RequirementRepository {
 
     // RETURN PRODUCT DISMISS REASONS
     public function productDismissReasons();
+
+    // RETURN PRODUCT DISMISS REASONS
+    public function expensesTypes();
 }

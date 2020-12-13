@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             PositionsSeeder::class,
             InitiatoryTypesSeeder::class,
             ProductDismissReasonsSeeder::class,
+            ExpensesTypesSeeder::class,
         ]);
     }
 }

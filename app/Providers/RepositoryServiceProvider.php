@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Repositories\Contracts\CategoryRepository;
 use App\Repositories\Contracts\CustomerRepository;
+use App\Repositories\Contracts\ExpensesRepository;
 use App\Repositories\Contracts\ExportInvoiceRepository;
 use App\Repositories\Contracts\ImportInvoiceRepository;
 use App\Repositories\Contracts\InitiatoryRepository;
@@ -17,6 +18,7 @@ use App\Repositories\Contracts\UserRepository;
 use App\Repositories\Contracts\WarehouseRepository;
 use App\Repositories\EloquentCategoryRepository;
 use App\Repositories\EloquentCustomerRepository;
+use App\Repositories\EloquentExpensesRepository;
 use App\Repositories\EloquentExportInvoiceRepository;
 use App\Repositories\EloquentImportInvoiceRepository;
 use App\Repositories\EloquentInitiatoryRepository;
@@ -43,23 +45,24 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this -> app -> bind(UserRepository::class, EloquentUserRepository::class);
-        $this -> app -> bind(SeasonRepository::class, EloquentSeasonRepository::class);
-        $this -> app -> bind(SupplierRepository::class, EloquentSupplierRepository::class);
-        $this -> app -> bind(WarehouseRepository::class, EloquentWarehouseRepository::class);
-        $this -> app -> bind(CategoryRepository::class, EloquentCategoryRepository::class);
-        $this -> app -> bind(ProductRepository::class, EloquentProductRepository::class);
-        $this -> app -> bind(ImportInvoiceRepository::class, EloquentImportInvoiceRepository::class);
-        $this -> app -> bind(RequirementRepository::class, EloquentRequirementRepository::class);
-        $this -> app -> bind(InitiatoryRepository::class, EloquentInitiatoryRepository::class);
-        $this -> app -> bind(CustomerRepository::class, EloquentCustomerRepository::class);
-        $this -> app -> bind(ExportInvoiceRepository::class, EloquentExportInvoiceRepository::class);
-        $this -> app -> bind(RefundRepository::class, EloquentRefundRepository::class);
-        $this -> app -> bind(ProductDismissOrderRepository::class, EloquentProductDismissOrderRepository::class);
+        $this->app->bind(UserRepository::class, EloquentUserRepository::class);
+        $this->app->bind(SeasonRepository::class, EloquentSeasonRepository::class);
+        $this->app->bind(SupplierRepository::class, EloquentSupplierRepository::class);
+        $this->app->bind(WarehouseRepository::class, EloquentWarehouseRepository::class);
+        $this->app->bind(CategoryRepository::class, EloquentCategoryRepository::class);
+        $this->app->bind(ProductRepository::class, EloquentProductRepository::class);
+        $this->app->bind(ImportInvoiceRepository::class, EloquentImportInvoiceRepository::class);
+        $this->app->bind(RequirementRepository::class, EloquentRequirementRepository::class);
+        $this->app->bind(InitiatoryRepository::class, EloquentInitiatoryRepository::class);
+        $this->app->bind(CustomerRepository::class, EloquentCustomerRepository::class);
+        $this->app->bind(ExportInvoiceRepository::class, EloquentExportInvoiceRepository::class);
+        $this->app->bind(RefundRepository::class, EloquentRefundRepository::class);
+        $this->app->bind(ProductDismissOrderRepository::class, EloquentProductDismissOrderRepository::class);
 
         // REPORTS
-        $this -> app -> bind(ReportProductRepository::class, EloquentReportProductRepository::class);
-        $this -> app -> bind(ReportSalesRepository::class, EloquentReportSalesRepository::class);
+        $this->app->bind(ReportProductRepository::class, EloquentReportProductRepository::class);
+        $this->app->bind(ReportSalesRepository::class, EloquentReportSalesRepository::class);
+        $this->app->bind(ExpensesRepository::class, EloquentExpensesRepository::class);
     }
 
     /**
