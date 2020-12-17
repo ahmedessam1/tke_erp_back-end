@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Traits\Eloquent\Status;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -12,7 +13,7 @@ use Auth;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, Notifiable, HasRoles, Sorting;
+    use HasApiTokens, Notifiable, HasRoles, Sorting, Status;
 
     /**
      * The attributes that are mass assignable.
