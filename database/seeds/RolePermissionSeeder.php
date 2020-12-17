@@ -23,6 +23,8 @@ class RolePermissionSeeder extends Seeder
             'data_entry',
             'tax',
             'warehouse',
+            'graphic_designer',
+            'digital_marketing',
         ];
 
         for ($x = 0; $x < count($roles); $x++) {

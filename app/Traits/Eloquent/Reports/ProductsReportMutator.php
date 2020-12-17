@@ -22,7 +22,7 @@ trait ProductsReportMutator {
 
     // SINGLE ITEM NET PRICE
     public function getReportTotalQuantityAttribute() {
-        if ($this->hasRole(['super_admin', 'sales', 'data_entry', 'accountant', 'tax', 'warehouse'])) {
+        if ($this->hasRole(['super_admin', 'sales', 'data_entry', 'accountant', 'tax', 'warehouse', 'digital_marketing'])) {
             return $this->productLog->available_quantity;
         } else
             return;
@@ -36,7 +36,7 @@ trait ProductsReportMutator {
     }
 
     public function getReportAvgSellPriceAttribute() {
-        if ($this->hasRole(['super_admin', 'sales', 'accountant', 'warehouse']))
+        if ($this->hasRole(['super_admin', 'sales', 'accountant', 'warehouse', 'digital_marketing']))
             return $this->productLog->average_sell_price;
         else
             return;
