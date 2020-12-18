@@ -17,12 +17,19 @@ class ExpensesController extends Controller
         $this->model = $model;
     }
 
-    public function index (Request $request) {
+    public function index(Request $request)
+    {
         return Response::json($this->model->index($request->all()));
     }
 
-    public function search (TableSearchRequest $request) {
+    public function search(TableSearchRequest $request)
+    {
         return Response::json($this->model->search($request->all()));
+    }
+
+    public function show($item_id)
+    {
+        return Response::json($this->model->show($item_id));
     }
 
     public function store(ExpensesStoreRequest $request)
@@ -30,7 +37,8 @@ class ExpensesController extends Controller
         return Response::json($this->model->store($request->all()));
     }
 
-    public function delete ($item_id) {
+    public function delete($item_id)
+    {
         return Response::json($this->model->delete($item_id));
     }
 }

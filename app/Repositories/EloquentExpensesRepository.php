@@ -17,7 +17,7 @@ class EloquentExpensesRepository implements ExpensesRepository
     {
         $sorting = $this->setSorting($request['sort_by'], $request['sort_type']);
 
-        return Expenses::orderBy($sorting['sort_by'], $sorting['sort_type'])
+        return Expenses::withCustomer()->withUser()->orderBy($sorting['sort_by'], $sorting['sort_type'])
             ->paginate(30);
     }
 
@@ -26,9 +26,14 @@ class EloquentExpensesRepository implements ExpensesRepository
         $sorting = $this->setSorting($request['sort_by'], $request['sort_type']);
         $q = $request['query'];
 
-        return Expenses::where('title', 'LIKE', '%' . $q . '%')
+        return Expenses::withCustomer()->withUser()->where('title', 'LIKE', '%' . $q . '%')
             ->orderBy($sorting['sort_by'], $sorting['sort_type'])
             ->paginate(30);
+    }
+
+    public function show($item_id)
+    {
+        return Expenses::withCustomer()->withUser()->find($item_id);
     }
 
     function store($request)

@@ -29,7 +29,7 @@ class InvoiceProductsStoreRequest extends FormRequest
         return [
             'invoice_id' => 'required|exists:export_invoices,id',
 
-            'sequence_number' => ['required', new InvoiceProductSequanceNumber($this->invoice_id, $this->sequence_number)],
+            'sequence_number' => [new InvoiceProductSequanceNumber($this->invoice_id, $this->sequence_number)],
 
             // SOLD PRODUCTS VALIDATION
             'product_id' => 'required|exists:products,id',

@@ -30,7 +30,10 @@ class InvoiceProductSequanceNumber implements Rule
      */
     public function passes($attribute, $value)
     {
-        $checker = SoldProducts::where('export_invoice_id', $this->invoice_id)->where('sequence_number', $this->sequence_number)->first();
+        $checker = SoldProducts::where('export_invoice_id', $this->invoice_id)
+            ->where('sequence_number', $this->sequence_number)
+            ->whereNotNull('sequence_number')
+            ->first();
         if ($checker)
             return false;
         return true;

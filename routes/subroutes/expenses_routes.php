@@ -11,6 +11,11 @@ Route::middleware(['auth:api'])->group(function () {
             -> name('search')
             -> middleware(['role:super_admin']);
 
+        // SHOW EXPENSES
+        Route::get('/{item_id}', 'ExpensesController@show')
+            -> name('show')
+            -> middleware(['role:super_admin']);
+
         // ADD NEW EXPENSES
         Route::post('/store', 'ExpensesController@store')
             ->name('store')

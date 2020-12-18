@@ -8,6 +8,8 @@ interface ExpensesRepository
 
     public function search($request);
 
+    public function show($item_id);
+
     public function store($request);
 
     public function delete($item_id);

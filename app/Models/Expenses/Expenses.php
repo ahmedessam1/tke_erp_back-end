@@ -19,4 +19,24 @@ class Expenses extends Model
 
     // DATES
     protected $dates = ['deleted_at'];
+
+    // RELATIONSHIPS
+    public function customer()
+    {
+        return $this->belongsTo('App\Models\Customer\Customer', 'customer_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo('App\User', 'user_id');
+    }
+
+    // SCOPES
+    public function scopeWithCustomer($builder) {
+        return $builder->with('customer');
+    }
+
+    public function scopeWithUser($builder) {
+        return $builder->with('user');
+    }
 }

@@ -14,7 +14,7 @@ class AddSequenceNumberToSoldProductsTable extends Migration
     public function up()
     {
         Schema::table('sold_products', function (Blueprint $table) {
-            $table->unsignedInteger('sequence_number');
+            $table->unsignedInteger('sequence_number')->nullable();
         });
     }
 
