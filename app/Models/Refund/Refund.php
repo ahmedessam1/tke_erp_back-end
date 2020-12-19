@@ -15,7 +15,6 @@ class Refund extends Model
 {
     use InvoiceCalculations, SoftDeletes, Sorting, Status, User;
 
-    protected $casts = ['approve' => 'integer'];
     // FILLABLE
     protected $fillable = [
         'title', 'assigned_user_id', 'number', 'model_id', 'tax', 'discount', 'approve', 'notes', 'date', 'type', 'created_by', 'updated_by'

@@ -166,7 +166,6 @@ class EloquentReportProductRepository implements ReportProductRepository {
      * @return
      */
     public function topSoldProfit ($type) {
-        $this->cache->forget('top_profit_products_report:'.$type);
         $result = $this->cache->remember('top_profit_products_report:'.$type, function () use ($type) {
             $report_data = ProductLog::join('products', 'product_logs.product_id', '=', 'products.id')
             ->select(

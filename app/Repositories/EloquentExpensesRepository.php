@@ -17,7 +17,7 @@ class EloquentExpensesRepository implements ExpensesRepository
     {
         $sorting = $this->setSorting($request['sort_by'], $request['sort_type']);
 
-        return Expenses::withCustomer()->withUser()->orderBy($sorting['sort_by'], $sorting['sort_type'])
+        return Expenses::withExpenseType()->withCustomer()->withUser()->orderBy($sorting['sort_by'], $sorting['sort_type'])
             ->paginate(30);
     }
 
@@ -26,14 +26,14 @@ class EloquentExpensesRepository implements ExpensesRepository
         $sorting = $this->setSorting($request['sort_by'], $request['sort_type']);
         $q = $request['query'];
 
-        return Expenses::withCustomer()->withUser()->where('title', 'LIKE', '%' . $q . '%')
+        return Expenses::withExpenseType()->withCustomer()->withUser()->where('title', 'LIKE', '%' . $q . '%')
             ->orderBy($sorting['sort_by'], $sorting['sort_type'])
             ->paginate(30);
     }
 
     public function show($item_id)
     {
-        return Expenses::withCustomer()->withUser()->find($item_id);
+        return Expenses::withExpenseType()->withPaymentType()->withCustomer()->withUser()->find($item_id);
     }
 
     function store($request)
@@ -43,6 +43,28 @@ class EloquentExpensesRepository implements ExpensesRepository
             ['created_by' => $this->getAuthUserId()]
         );
         return Expenses::create($expenses_fillable_values);
+    }
+
+    function update($id, $request)
+    {
+        $update_data = array_merge(
+            $request,
+            ['updated_by' => $this->getAuthUserId()]
+        );
+        $data = Expenses::where('id', $id)->where('approve', 0)->first();
+        $data->update($update_data);
+
+        return $data;
+    }
+
+    public function approve($item_id)
+    {
+        $approved = Expenses::withExpenseType()->withPaymentType()->withCustomer()->withUser()->notApproved()->find($item_id);
+        if ($approved) {
+            $approved->approve = 1;
+            $approved->save();
+        }
+        return $approved;
     }
 
     public function delete($item_id)

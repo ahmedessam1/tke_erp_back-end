@@ -37,6 +37,16 @@ class ExpensesController extends Controller
         return Response::json($this->model->store($request->all()));
     }
 
+    public function update($id, ExpensesStoreRequest $request)
+    {
+        return Response::json($this->model->update($id, $request->all()));
+    }
+
+    public function approve($item_id)
+    {
+        return Response::json($this->model->approve($item_id));
+    }
+
     public function delete($item_id)
     {
         return Response::json($this->model->delete($item_id));

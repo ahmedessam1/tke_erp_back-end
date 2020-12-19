@@ -21,6 +21,16 @@ class Expenses extends Model
     protected $dates = ['deleted_at'];
 
     // RELATIONSHIPS
+    public function expenseType()
+    {
+        return $this->belongsTo('App\Models\Expenses\ExpensesTypes', 'expense_type_id');
+    }
+
+    public function paymentType()
+    {
+        return $this->belongsTo('App\Models\Requirements\PaymentType', 'payment_type_id');
+    }
+
     public function customer()
     {
         return $this->belongsTo('App\Models\Customer\Customer', 'customer_id');
@@ -32,6 +42,14 @@ class Expenses extends Model
     }
 
     // SCOPES
+    public function scopeWithExpenseType($builder) {
+        return $builder->with('expenseType');
+    }
+
+    public function scopeWithPaymentType($builder) {
+        return $builder->with('paymentType');
+    }
+
     public function scopeWithCustomer($builder) {
         return $builder->with('customer');
     }

@@ -12,5 +12,9 @@ interface ExpensesRepository
 
     public function store($request);
 
+    public function update($id, $request);
+
+    public function approve($item_id);
+
     public function delete($item_id);
 }

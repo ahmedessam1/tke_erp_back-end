@@ -16,7 +16,6 @@ class ImportInvoice extends Model
 {
     use SoftDeletes, InvoiceCalculations, Sorting, User, Status;
 
-    protected $casts = ['approve' => 'integer'];
     // FILLABLE
     protected $fillable = [
         'name', 'number', 'supplier_id', 'date', 'tax', 'discount', 'created_by', 'updated_by'
