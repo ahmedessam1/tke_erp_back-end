@@ -15,6 +15,7 @@ class ExportInvoice extends Model
 {
     use SoftDeletes, InvoiceCalculations, Sorting, User, Status;
 
+    protected $casts = ['approve' => 'integer'];
     // FILLABLE
     protected $fillable = [
         'name', 'seller_id', 'number', 'customer_branch_id', 'date', 'tax', 'discount', 'created_by', 'updated_by'
