@@ -2,79 +2,78 @@
 
 namespace App\Repositories;
 
-use App\Models\Expenses\Expenses;
-use App\Repositories\Contracts\ExpensesRepository;
+use App\Models\Custody\Custody;
+use App\Repositories\Contracts\CustodyRepository;
 use Auth;
 
-class EloquentExpensesRepository implements ExpensesRepository
+class EloquentCustodyRepository implements CustodyRepository
 {
     private function getAuthUserId()
     {
         return Auth::user()->id;
     }
 
-    public function index($request)
+    public function moneyCustodyIndex($request)
     {
         $sorting = $this->setSorting($request['sort_by'], $request['sort_type']);
 
-        return Expenses::withExpenseType()->withCustomer()->withUser()->orderBy($sorting['sort_by'], $sorting['sort_type'])
-            ->paginate(30);
+        return Custody::withUser()->withPaymentType()->orderBy($sorting['sort_by'], $sorting['sort_type'])->paginate(30);
     }
 
-    public function search($request)
+    public function moneyCustodySearch($request)
     {
         $sorting = $this->setSorting($request['sort_by'], $request['sort_type']);
         $q = $request['query'];
 
-        return Expenses::withExpenseType()->withCustomer()->withUser()->where('title', 'LIKE', '%' . $q . '%')
+        return Custody::withUser()->withPaymentType()->where('title', 'LIKE', '%' . $q . '%')
             ->orderBy($sorting['sort_by'], $sorting['sort_type'])
             ->paginate(30);
     }
 
-    public function show($item_id)
+    public function moneyCustodyShow($item_id)
     {
-        return Expenses::withExpenseType()->withPaymentType()->withCustomer()->withUser()->find($item_id);
+        return Custody::withUser()->withPaymentType()->find($item_id);
     }
 
-    public function store($request)
+    public function moneyCustodyStore($request)
     {
         $fillable_values = array_merge(
             $request,
             ['created_by' => $this->getAuthUserId()]
         );
-        return Expenses::create($fillable_values);
+        return Custody::create($fillable_values);
     }
 
-    public function update($id, $request)
+    public function moneyCustodyUpdate($id, $request)
     {
         $update_data = array_merge(
             $request,
             ['updated_by' => $this->getAuthUserId()]
         );
-        $data = Expenses::where('id', $id)->where('approve', 0)->first();
+        $data = Custody::where('id', $id)->where('approve', 0)->first();
         $data->update($update_data);
 
         return $data;
     }
 
-    public function approve($item_id)
+    public function moneyCustodyApprove($item_id, $amount)
     {
-        $approved = Expenses::withExpenseType()->withPaymentType()->withCustomer()->withUser()->notApproved()->find($item_id);
+        $approved = Custody::withUser()->withPaymentType()->notApproved()->find($item_id);
         if ($approved) {
             $approved->approve = 1;
+            $approved->spent_amount = $amount;
             $approved->save();
         }
         return $approved;
     }
 
-    public function delete($item_id)
+    public function moneyCustodyDelete($item_id)
     {
-        $deleted = Expenses::notApproved()->find($item_id);
+        $deleted = Custody::notApproved()->find($item_id);
         if ($deleted)
             $deleted->delete();
         return $deleted;
     }
-
 
     /*
      * **************************************************

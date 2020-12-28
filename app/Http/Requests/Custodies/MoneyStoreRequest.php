@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Expenses;
+namespace App\Http\Requests\Custodies;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ExpensesStoreRequest extends FormRequest
+class MoneyStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -20,13 +20,11 @@ class ExpensesStoreRequest extends FormRequest
     {
         return [
             'title' => 'required|max:'.trans('validation_standards.titles.max'),
-            'expense_type_id' => 'required|exists:expenses_types,id',
+            'payment_type_id' => 'required|exists:payment_types,id',
             'amount' => 'required|numeric',
             'date' => 'required|date',
-            'customer_id' => 'nullable|exists:customers,id',
             'user_id' => 'nullable|exists:users,id',
             'note' => 'max:'.trans('validation_standards.descriptions.max'),
-            'payment_type_id' => 'required|exists:payment_types,id',
         ];
     }
 
@@ -38,9 +36,6 @@ class ExpensesStoreRequest extends FormRequest
             'title.max' => trans('form_responses.expenses.title.max'),
             'title.min' => trans('form_responses.expenses.title.min'),
 
-            // EXPENSES TYPE ID VALIDATION
-            'expense_type_id.required' => trans('form_responses.expenses.expense_type_id.required'),
-
             // AMOUNT VALIDATION
             'amount.required' => trans('form_responses.expenses.amount.required'),
             'amount.numeric' => trans('form_responses.expenses.amount.numeric'),
@@ -48,9 +43,6 @@ class ExpensesStoreRequest extends FormRequest
             // DATE VALIDATION
             'date.required' => trans('form_responses.expenses.date.required'),
             'date.date' => trans('form_responses.expenses.date.date'),
-
-            // CUSTOMER ID VALIDATION
-            'customer_id.exists' => trans('form_responses.expenses.customer_id.exists'),
 
             // USER ID VALIDATION
             'user_id.exists' => trans('form_responses.expenses.user_id.exists'),

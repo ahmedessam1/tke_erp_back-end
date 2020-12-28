@@ -21,7 +21,7 @@ Route::middleware(['auth:api'])->group(function () {
             ->name('store')
             ->middleware(['role:super_admin']);
 
-        // UPDATE EXPORT_INVOICE
+        // UPDATE
         Route::patch('/update/{item_id}', 'ExpensesController@update')
             -> name('update')
             -> middleware(['role:super_admin']);

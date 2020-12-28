@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Repositories\Contracts\CategoryRepository;
+use App\Repositories\Contracts\CustodyRepository;
 use App\Repositories\Contracts\CustomerRepository;
 use App\Repositories\Contracts\ExpensesRepository;
 use App\Repositories\Contracts\ExportInvoiceRepository;
@@ -17,6 +18,7 @@ use App\Repositories\Contracts\SupplierRepository;
 use App\Repositories\Contracts\UserRepository;
 use App\Repositories\Contracts\WarehouseRepository;
 use App\Repositories\EloquentCategoryRepository;
+use App\Repositories\EloquentCustodyRepository;
 use App\Repositories\EloquentCustomerRepository;
 use App\Repositories\EloquentExpensesRepository;
 use App\Repositories\EloquentExportInvoiceRepository;
@@ -63,6 +65,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ReportProductRepository::class, EloquentReportProductRepository::class);
         $this->app->bind(ReportSalesRepository::class, EloquentReportSalesRepository::class);
         $this->app->bind(ExpensesRepository::class, EloquentExpensesRepository::class);
+        $this->app->bind(CustodyRepository::class, EloquentCustodyRepository::class);
     }
 
     /**

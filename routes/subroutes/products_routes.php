@@ -12,11 +12,11 @@ Route::middleware(['auth:api'])->group(function () {
         // PRODUCT REQUIREMENTS FOR ADDING A NEW PRODUCT
         Route::get('/add', 'ProductsController@add')
             -> name('add')
-            -> middleware(['role:super_admin|data_entry|accountant']);
+            -> middleware(['role:super_admin|data_entry|accountant|digital_marketing']);
         // ADD A NEW PRODUCT
         Route::post('/store', 'ProductsController@store')
             -> name('store')
-            -> middleware(['role:super_admin|data_entry|accountant']);
+            -> middleware(['role:super_admin|data_entry|accountant|digital_marketing']);
         // FILTERING PRODUCTS BY CATEGORY AND SUBCATEGORIES
         Route::post('/category/subcategory/filtering', 'ProductsController@categorySubcategoryFiltering')
             -> name('category.subcategory.filtering')
@@ -32,11 +32,11 @@ Route::middleware(['auth:api'])->group(function () {
         // EDIT A PRODUCT
         Route::get('/edit/{product_id}', 'ProductsController@edit')
             -> name('edit')
-            -> middleware(['role:super_admin|data_entry|accountant']);
+            -> middleware(['role:super_admin|data_entry|accountant|digital_marketing']);
         // UPDATE PRODUCT
         Route::patch('/update/{product_id}', 'ProductsController@update')
             -> name('update')
-            -> middleware(['role:super_admin|data_entry|accountant']);
+            -> middleware(['role:super_admin|data_entry|accountant|digital_marketing']);
         // SEARCH PRODUCTS
         Route::get('/search', 'ProductsController@search')
             -> name('search')
@@ -51,7 +51,6 @@ Route::middleware(['auth:api'])->group(function () {
             -> middleware(['role:super_admin']);
         // PRODUCT BARCODE CHECK
         Route::get('/barcode/check', 'ProductsController@barcodeCheck')
-            -> name('barcode_check')
-            -> middleware(['role:super_admin|data_entry|accountant']);
+            -> name('barcode_check');
     });
 });
