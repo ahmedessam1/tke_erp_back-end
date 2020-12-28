@@ -18,7 +18,7 @@ class CreateExportInvoicesTable extends Migration
             $table->unsignedInteger('customer_branch_id');
             $table->unsignedInteger('seller_id');
             $table->string('name', trans('validation_standards.names.max'));
-            $table->unsignedBigInteger('number')->unique();
+            $table->string('number', trans('validation_standards.code.max'));
             $table->date('date');
             $table->boolean('tax');
             $table->float('discount')->default(0);

@@ -17,7 +17,7 @@ class ExportInvoice extends Model
 
     // FILLABLE
     protected $fillable = [
-        'name', 'seller_id', 'number', 'customer_branch_id', 'date', 'tax', 'discount', 'created_by', 'updated_by'
+        'name', 'seller_id', 'number', 'customer_branch_id', 'date', 'tax', 'discount', 'created_by', 'updated_by', 'notes'
     ];
 
     // APPENDS
