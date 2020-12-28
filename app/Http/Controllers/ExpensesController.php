@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Expenses\MoneyStoreRequest;
+use App\Http\Requests\Expenses\ExpensesStoreRequest;
 use App\Http\Requests\TableSearchRequest;
 use App\Repositories\Contracts\ExpensesRepository;
 use Illuminate\Http\Request;
@@ -32,12 +32,12 @@ class ExpensesController extends Controller
         return Response::json($this->model->show($item_id));
     }
 
-    public function store(MoneyStoreRequest $request)
+    public function store(ExpensesStoreRequest $request)
     {
         return Response::json($this->model->store($request->all()));
     }
 
-    public function update($id, MoneyStoreRequest $request)
+    public function update($id, ExpensesStoreRequest $request)
     {
         return Response::json($this->model->update($id, $request->all()));
     }

@@ -132,18 +132,24 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
     public function storeInvoiceProducts($request)
     {
         return DB::transaction(function () use ($request) {
-            $invoice = ExportInvoice::notApproved()->find($request->invoice_id);
+            $user = Auth::user();
+            if ($user->hasRole(['super_admin', 'accountant', 'tax'])) {
+                $invoice = ExportInvoice::notApproved()->find($request->invoice_id);
+            } else {
+                $invoice = ExportInvoice::notApproved()->where('seller_id', $this->getAuthUserId())->find($request->invoice_id);
+            }
 
-            // ADDING SOLD PRODUCT
-            SoldProducts::create([
-                "sequence_number" => $request->sequence_number,
-                "export_invoice_id" => $invoice->id,
-                "product_id" => $request->product_id,
-                "quantity" => $request->quantity,
-                "sold_price" => $request->sold_price,
-                "discount" => $request->discount,
-                "created_by" => $this->getAuthUserId(),
-            ]);
+            if($invoice)
+                // ADDING SOLD PRODUCT
+                SoldProducts::create([
+                    "sequence_number" => $request->sequence_number,
+                    "export_invoice_id" => $invoice->id,
+                    "product_id" => $request->product_id,
+                    "quantity" => $request->quantity,
+                    "sold_price" => $request->sold_price,
+                    "discount" => $request->discount,
+                    "created_by" => $this->getAuthUserId(),
+                ]);
 
             return $invoice;
         });

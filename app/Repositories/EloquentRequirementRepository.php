@@ -79,7 +79,7 @@ class EloquentRequirementRepository implements RequirementRepository
         $user = Auth::user();
         if ($user->hasRole(['super_admin', 'accountant']))
             return $this->getCustomersBranchesListOrderedByName();
-        else if ($user->hasRole(['super_admin', 'sales']))
+        else if ($user->hasRole(['super_admin', 'sales', 'digital_marketing']))
             return $this->getCustomersBranchesListPerUserOrderedByName();
         else
             return 403;

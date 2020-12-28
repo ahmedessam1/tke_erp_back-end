@@ -13,28 +13,28 @@ Route::middleware(['auth:api'])->group(function () {
         // ADD A NEW EXPORT_INVOICE
         Route::post('/store/invoice', 'ExportInvoicesController@storeInvoice')
             -> name('store.invoice')
-            -> middleware(['role:super_admin|accountant']);
+            -> middleware(['role:super_admin|accountant|digital_marketing']);
         Route::post('/store/invoice_products', 'ExportInvoicesController@storeInvoiceProducts')
             -> name('store.invoice_products')
-            -> middleware(['role:super_admin|accountant']);
+            -> middleware(['role:super_admin|accountant|digital_marketing']);
 
         // REMOVE PRODUCT FROM EXPORT_INVOICE
         Route::delete('/{invoice_id}/remove/{sold_product_id}', 'ExportInvoicesController@removeProductFromInvoice')
             -> name('remove_product')
-            -> middleware(['role:super_admin|accountant']);
+            -> middleware(['role:super_admin|accountant|digital_marketing']);
 
         // SHOW INVOICE DETAILS
         Route::get('/show/{export_invoice_id}', 'ExportInvoicesController@show')
             -> name('show')
-            -> middleware(['role:super_admin|sales|accountant|tax']);
+            -> middleware(['role:super_admin|sales|accountant|tax|digital_marketing']);
         // EDIT A EXPORT_INVOICE
         Route::get('/edit/{export_invoice_id}', 'ExportInvoicesController@edit')
             -> name('edit')
-            -> middleware(['role:super_admin|accountant']);
+            -> middleware(['role:super_admin|accountant|digital_marketing']);
         // UPDATE EXPORT_INVOICE
         Route::patch('/update/{export_invoice_id}', 'ExportInvoicesController@update')
             -> name('update')
-            -> middleware(['role:super_admin|accountant']);
+            -> middleware(['role:super_admin|accountant|digital_marketing']);
         // SOFT DELETE EXPORT_INVOICE
         Route::delete('/delete/{export_invoice_id}', 'ExportInvoicesController@delete')
             -> name('delete')
@@ -51,14 +51,14 @@ Route::middleware(['auth:api'])->group(function () {
         // INVOICES PER USER
         Route::get('/per_user', 'ExportInvoicesController@invoicesPerUser')
             -> name('per_user')
-            -> middleware(['role:super_admin|sales']);
+            -> middleware(['role:super_admin|sales|digital_marketing']);
         // INVOICES PER USER SEARCH
         Route::get('/per_user/search', 'ExportInvoicesController@invoicesPerUserSearch')
             -> name('per_user.search')
-            -> middleware(['role:super_admin|sales']);
+            -> middleware(['role:super_admin|sales|digital_marketing']);
         // UPDATE PRODUCT PURCHASE PRICE IN EXPORT_INVOICE
         Route::get('/update/selling_price/{product_row_id}/{new_price}', 'ExportInvoicesController@updateProductSellingPriceInInvoice')
             -> name('update_selling_price')
-            -> middleware(['role:super_admin']);
+            -> middleware(['role:super_admin|accountant|digital_marketing']);
     });
 });

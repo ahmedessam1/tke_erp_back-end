@@ -98,6 +98,9 @@ class RouteServiceProvider extends ServiceProvider
             // REPORTS
             require base_path('routes/subroutes/reports/products_report_routes.php');
             require base_path('routes/subroutes/reports/sales_report_routes.php');
+
+            // GENERAL PURPOSE ROUTES
+            require base_path('routes/subroutes/general_routes.php');
         });
     }
 }
