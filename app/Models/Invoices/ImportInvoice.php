@@ -61,6 +61,12 @@ class ImportInvoice extends Model
         return $this -> hasMany('App\Models\Product\ProductCredits', 'import_invoice_id');
     }
 
+    public function attachedFiles()
+    {
+        return $this->hasMany('App\Models\General\AttachedFiles', 'model_id')
+            ->where('model_type', 'import_invoice');
+    }
+
     // SCOPES
     public function scopeWithSupplier ($builder) {
         return $builder -> with('supplier.addresses.contacts');
@@ -68,5 +74,10 @@ class ImportInvoice extends Model
 
     public function scopeWithProductCredits ($builder) {
         return $builder -> with('productCredits.product.images') -> with('productCredits.warehouses');
+    }
+
+    public function scopeWithAttachedFiles($builder)
+    {
+        return $builder->with('attachedFiles');
     }
 }

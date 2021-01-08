@@ -94,12 +94,14 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
             $export_invoice = ExportInvoice::withCustomerBranch()
                 ->withSeller()
                 ->withSoldProductsImages()
+                ->withAttachedFiles()
                 ->where($tax_conditions)
                 ->find($export_invoice_id);
         } else {
             $export_invoice = ExportInvoice::withCustomerBranch()
                 ->withSoldProductsImages()
                 ->withCustomerBranch()
+                ->withAttachedFiles()
                 ->where('seller_id', $this->getAuthUserId())
                 ->where($tax_conditions)
                 ->find($export_invoice_id);

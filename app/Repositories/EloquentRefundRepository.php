@@ -93,10 +93,10 @@ class EloquentRefundRepository implements RefundRepository {
 
         $refund = Refund::where($tax_conditions)->find($refund_id);
         if ($refund->type === 'in') {
-            $invoice = Refund::withRefundedProductsImages()->withCustomer()->find($refund->id);
+            $invoice = Refund::withRefundedProductsImages()->withCustomer()->withAttachedFiles()->find($refund->id);
             $this->customerListEditData($invoice, 'refund_in');
         } else
-            $invoice = Refund::withRefundedProductsImages()->withSupplier()->find($refund->id);
+            $invoice = Refund::withRefundedProductsImages()->withSupplier()->withAttachedFiles()->find($refund->id);
 
         return $invoice;
     }

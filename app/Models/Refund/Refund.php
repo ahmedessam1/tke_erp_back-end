@@ -58,6 +58,12 @@ class Refund extends Model
         return $this->belongsTo('App\User', 'assigned_user_id');
     }
 
+    public function attachedFiles()
+    {
+        return $this->hasMany('App\Models\General\AttachedFiles', 'model_id')
+            ->where('model_type', 'refund_invoice');
+    }
+
     // MUTATORS
     public function getRefundTitleAttribute()
     {
@@ -107,5 +113,10 @@ class Refund extends Model
 
     public function scopeWithRefundedProductsImages ($builder) {
         return $builder -> with('refundedProducts.product.images');
+    }
+
+    public function scopeWithAttachedFiles($builder)
+    {
+        return $builder->with('attachedFiles');
     }
 }

@@ -57,6 +57,12 @@ class ExportInvoice extends Model
         return $this->hasMany('App\Models\Product\SoldProducts');
     }
 
+    public function attachedFiles()
+    {
+        return $this->hasMany('App\Models\General\AttachedFiles', 'model_id')
+            ->where('model_type', 'export_invoice');
+    }
+
     // MUTATORS
     public function getTitleAttribute()
     {
@@ -93,5 +99,10 @@ class ExportInvoice extends Model
     {
         // REMOVED with('soldProducts.product.credits') for optimizing the response
         return $builder->with('soldProducts.product.images');
+    }
+
+    public function scopeWithAttachedFiles($builder)
+    {
+        return $builder->with('attachedFiles');
     }
 }

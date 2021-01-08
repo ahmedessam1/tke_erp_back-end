@@ -50,6 +50,7 @@ return [
         'title' => 'كشف حساب',
         'refund' => 'مرتجع',
         'payment' => 'دفعة',
+        'expenses' => 'مصاريف',
         'initiatory_credit' => 'رصيد افتتاحي',
         'check' => 'شيك',
         'table' => [

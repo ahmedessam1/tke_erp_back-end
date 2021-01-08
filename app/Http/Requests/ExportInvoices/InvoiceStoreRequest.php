@@ -31,7 +31,7 @@ class InvoiceStoreRequest extends FormRequest
                     |max:'.trans('validation_standards.names.max'),
             'number' => 'required
                         |numeric
-                        |unique:export_invoices,number,'.$this -> export_invoice_id,
+                        |unique:export_invoices,number,'.$this -> export_invoice_id.',id,deleted_at,NULL',
             'customer_branch_id' => 'required|exists:customer_branches,id',
             'seller_id' => 'required|exists:users,id',
             'tax' => 'required|boolean',

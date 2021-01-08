@@ -8,6 +8,7 @@ use App\Models\Customer\Customer;
 use App\Models\Customer\CustomerBranch;
 use App\Models\Customer\CustomerInitiatoryCredit;
 use App\Models\Customer\CustomerPayment;
+use App\Models\Expenses\Expenses;
 use App\Models\Invoices\ExportInvoice;
 use App\Models\Product\SoldProducts;
 use App\Models\Refund\Refund;
@@ -236,6 +237,23 @@ class EloquentReportSalesRepository implements ReportSalesRepository
                             'date' => $i_c->date
                         ]);
                     }
+
+
+                    // GET CUSTOMER EXPENSES
+                    $expenses = Expenses::approved()
+                        ->withCustomer()
+                        ->where('customer_id', $customers_id[$x])
+                        ->whereBetween('date', [$from_date, $to_date])
+                        ->get();
+
+                    foreach ($expenses as $expense)
+                        array_push($holder, [
+                            'type' => 'expenses',
+                            'branch_name' => $customer->name,
+                            'invoice_number' => '-',
+                            'total' => $expense->amount,
+                            'date' => $expense->date
+                        ]);
 
                     $data[$customer->name] = $holder;
                 }

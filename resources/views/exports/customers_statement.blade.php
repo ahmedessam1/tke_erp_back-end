@@ -36,11 +36,16 @@
                     $color = '#4175b8';
                     $total += $c['total'];
                     $append_to_name = '(' . trans('excel.customers_statement.initiatory_credit') . ')';
-                } else {
+                } else if($c['type'] === 'refund_invoice') {
                     $total -= $c['total'];
                     $color = '#FF0000';
                     $sign = '-';
                     $append_to_name = '(' . trans('excel.customers_statement.refund') . ')';
+                } else if($c['type'] === 'expenses') {
+                    $total -= $c['total'];
+                    $color = '#FF0000';
+                    $sign = '-';
+                    $append_to_name = '(' . trans('excel.customers_statement.expenses') . ')';
                 }
             @endphp
             <tr>

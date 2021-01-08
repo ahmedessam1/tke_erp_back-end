@@ -7,6 +7,7 @@ use App\Repositories\Contracts\CustodyRepository;
 use App\Repositories\Contracts\CustomerRepository;
 use App\Repositories\Contracts\ExpensesRepository;
 use App\Repositories\Contracts\ExportInvoiceRepository;
+use App\Repositories\Contracts\GeneralRepository;
 use App\Repositories\Contracts\ImportInvoiceRepository;
 use App\Repositories\Contracts\InitiatoryRepository;
 use App\Repositories\Contracts\ProductDismissOrderRepository;
@@ -22,6 +23,7 @@ use App\Repositories\EloquentCustodyRepository;
 use App\Repositories\EloquentCustomerRepository;
 use App\Repositories\EloquentExpensesRepository;
 use App\Repositories\EloquentExportInvoiceRepository;
+use App\Repositories\EloquentGeneralRepository;
 use App\Repositories\EloquentImportInvoiceRepository;
 use App\Repositories\EloquentInitiatoryRepository;
 use App\Repositories\EloquentProductDismissOrderRepository;
@@ -60,6 +62,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ExportInvoiceRepository::class, EloquentExportInvoiceRepository::class);
         $this->app->bind(RefundRepository::class, EloquentRefundRepository::class);
         $this->app->bind(ProductDismissOrderRepository::class, EloquentProductDismissOrderRepository::class);
+        $this->app->bind(GeneralRepository::class, EloquentGeneralRepository::class);
 
         // REPORTS
         $this->app->bind(ReportProductRepository::class, EloquentReportProductRepository::class);

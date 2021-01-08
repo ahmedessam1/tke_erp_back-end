@@ -17,7 +17,7 @@ class CreateImportInvoicesTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('supplier_id');
             $table->string('name', trans('validation_standards.names.max'));
-            $table->unsignedBigInteger('number');
+            $table->string('number', trans('validation_standards.code.max'));
             $table->date('date');
             $table->boolean('tax');
             $table->float('discount')->default(0);

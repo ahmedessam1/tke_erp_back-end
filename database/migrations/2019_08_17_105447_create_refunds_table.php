@@ -16,7 +16,7 @@ class CreateRefundsTable extends Migration
         Schema::create('refunds', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title', trans('validation_standards.names.max'));
-            $table->unsignedBigInteger('number');
+            $table->string('number', trans('validation_standards.code.max'));
             $table->unsignedInteger('model_id');
             $table->boolean('tax');
             $table->boolean('approve')->default(0);

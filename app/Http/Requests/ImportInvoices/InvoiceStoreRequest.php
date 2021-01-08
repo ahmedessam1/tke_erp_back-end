@@ -33,7 +33,7 @@ class InvoiceStoreRequest extends FormRequest
             'date' => 'required|date',
             'number' => 'required
                         |numeric
-                        |unique:import_invoices,number,'.$this -> import_invoice_id,
+                        |unique:import_invoices,number,'.$this -> import_invoice_id.',id,deleted_at,NULL',
             'tax' => 'required|boolean',
             'discount' => 'numeric
                         |max:'.trans('validation_standards.discount.max').'
