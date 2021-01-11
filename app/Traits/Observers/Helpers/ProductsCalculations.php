@@ -26,7 +26,7 @@ trait ProductsCalculations {
         $product_log = ProductLog::where('product_id', $product->product_id)->first();
 
         // MULTIPLY PRODUCT ACTUAL QUANTITY AND ACTUAL AVERAGE PURCHASE PRICE
-        $product_actual_quantity = $product_log->available_quantity;
+        $product_actual_quantity = abs($product_log->available_quantity);
         $product_actual_average_purchase_price = $product_log->average_purchase_price;
         $multiply_actual_quantity_and_average_purchase_price = $product_actual_quantity * $product_actual_average_purchase_price;
 
@@ -51,7 +51,7 @@ trait ProductsCalculations {
         $product_log = ProductLog::where('product_id', $product->product_id)->first();
 
         // MULTIPLY PRODUCT ACTUAL QUANTITY AND ACTUAL AVERAGE SELLING PRICE
-        $product_actual_quantity = $product_log->available_quantity;
+        $product_actual_quantity = abs($product_log->available_quantity);
         $product_actual_average_sell_price = $product_log->average_sell_price;
         $multiply_actual_quantity_and_average_sell_price = $product_actual_quantity * $product_actual_average_sell_price;
 
