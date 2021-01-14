@@ -17,7 +17,7 @@
         @foreach($products as $key => $product)
             <tr>
                 <td>
-                    @if($key < 65)
+                    @if($key < 165)
                         @if(is_file(public_path('storage/uploads/products/main/'.$product->images[0]->large_image)))
                             <img height="80px" width="80px" src="{{ public_path('storage/uploads/products/main/'.$product->images[0]->large_image) }}" alt="">
                         @else
