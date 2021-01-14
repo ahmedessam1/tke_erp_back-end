@@ -18,7 +18,9 @@
             <tr>
                 <td>
                     @if(is_file(public_path('storage/uploads/products/main/'.$product->images[0]->large_image)))
-                        <img height="80px" src="{{ public_path() }}/storage/uploads/products/main/{{ $product->images[0]->large_image }}" alt="">
+                        {{--<img height="80px" src="{{ public_path() }}/storage/uploads/products/main/{{ $product->images[0]->large_image }}" alt="">--}}
+                        <img height="80px" src="{{ public_path() }}/assets/placeholder.png" alt="">
+
                     @else
                         <img height="80px" src="{{ public_path() }}/assets/placeholder.png" alt="">
                     @endif
