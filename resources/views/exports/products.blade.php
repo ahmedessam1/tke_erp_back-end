@@ -18,7 +18,7 @@
             <tr>
                 <td>
                     @if(is_file(public_path('storage/uploads/products/thumbnail/'.$product->images[0]->thumbnail_image)))
-                        @if(substr(strrchr($product->images[0]->thumbnail_image,'.'),1) === 'jpg')
+                        @if(substr(strrchr($product->images[0]->thumbnail_image,'.'),1) === 'png')
                             <img height="80px" width="80px" src="{{ public_path('storage/uploads/products/thumbnail/'.$product->images[0]->thumbnail_image) }}" alt="">
                         @endif
                     @else
