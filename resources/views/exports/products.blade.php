@@ -17,12 +17,12 @@
         @foreach($products as $product)
             <tr>
                 <td>
-                    dd
-                    {{--@if(is_file(public_path('storage/uploads/products/thumbnail/'.$product->images[0]->thumbnail_image)))--}}
-                        {{--<img height="80px" width="80px" src="{{ public_path('storage/uploads/products/thumbnail/'.$product->images[0]->thumbnail_image) }}" alt="">--}}
-                    {{--@else--}}
-                        {{--<img height="80px" width="80px" src="{{ public_path() }}/assets/placeholder.png" alt="">--}}
-                    {{--@endif--}}
+                    @if(is_file(public_path('storage/uploads/products/thumbnail/'.$product->images[0]->thumbnail_image)))
+{{--                        <img height="80px" width="80px" src="{{ public_path('storage/uploads/products/thumbnail/'.$product->images[0]->thumbnail_image) }}" alt="">--}}
+                        <img height="80px" width="80px" src="{{ public_path() }}/assets/placeholder.png" alt="">
+                    @else
+                        <img height="80px" width="80px" src="{{ public_path() }}/assets/placeholder.png" alt="">
+                    @endif
                 </td>
                 <td>{{ $product->name }}</td>
                 <td>{{ $product->code }}</td>
