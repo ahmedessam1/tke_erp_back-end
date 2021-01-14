@@ -17,12 +17,10 @@
         @foreach($products as $key => $product)
             <tr>
                 <td>
-                    @if($key < 75)
-                        @if(is_file(public_path('storage/uploads/products/main/'.$product->images[0]->large_image)))
-                            <img height="80px" width="80px" src="{{ public_path('storage/uploads/products/main/'.$product->images[0]->large_image) }}" alt="">
-                        @else
-                            <img height="80px" width="80px" src="{{ public_path() }}/assets/placeholder.png" alt="">
-                        @endif
+                    @if(is_file(public_path('storage/uploads/products/main/'.$product->images[0]->large_image)))
+                        <img height="80px" width="80px" src="{{ public_path('storage/uploads/products/main/'.$product->images[0]->large_image) }}" alt="">
+                    @else
+                        <img height="80px" width="80px" src="{{ public_path() }}/assets/placeholder.png" alt="">
                     @endif
                 </td>
                 <td>{{ $product->name }}</td>
