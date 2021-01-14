@@ -18,15 +18,16 @@
             <tr>
                 <td>
                     @if(is_file(public_path('storage/uploads/products/thumbnail/'.$product->images[0]->thumbnail_image)))
-{{--                        <img height="80px" width="80px" src="{{ public_path('storage/uploads/products/thumbnail/'.$product->images[0]->thumbnail_image) }}" alt="">--}}
-                        <img height="80px" width="80px" src="{{ public_path() }}/assets/placeholder.png" alt="">
+                        @if(substr(strrchr($product->images[0]->thumbnail_image,'.'),1) === 'jpg')
+                            <img height="80px" width="80px" src="{{ public_path('storage/uploads/products/thumbnail/'.$product->images[0]->thumbnail_image) }}" alt="">
+                        @endif
                     @else
                         <img height="80px" width="80px" src="{{ public_path() }}/assets/placeholder.png" alt="">
                     @endif
                 </td>
                 <td>{{ $product->name }}</td>
                 <td>{{ $product->code }}</td>
-                <td>{{ $product->barcode }}</td>
+                <td>{{ $product->barcode }} </td>
                 <td>{{ $product->category->name }}</td>
                 <td>{{ $product->report_total_quantity }}</td>
                 <td>{{ $product->report_avg_purchase_price }}</td>
