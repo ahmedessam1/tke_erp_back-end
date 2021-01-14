@@ -112,6 +112,10 @@ class Product extends Model
     // MUTATOR
 
     // SCOPES
+    public function scopeWithProductLog ($builder) {
+        return $builder->with('productLog');
+    }
+
     public function scopeWithLocalCode ($builder) {
         return $builder->with('localCodes');
     }

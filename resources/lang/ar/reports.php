@@ -5,6 +5,7 @@ return [
     'CREDITS' => [
         'EXCEL_COLUMNS' => [
             'ID'        => '#',
+            'IMAGE'     => 'الصورة',
             'NAME'      => 'اسم الصنف',
             'CODE'      => 'كود',
             'BARCODE'   => 'باركود',
