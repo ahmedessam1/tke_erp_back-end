@@ -17,9 +17,9 @@
         @foreach($products as $product)
             <tr>
                 <td>
-                    @if(is_file(public_path('storage/uploads/products/thumbnail/'.$product->images[0]->thumbnail_image)))
-                        @if(substr(strrchr($product->images[0]->thumbnail_image,'.'),1) === 'png')
-                            <img height="80px" width="80px" src="{{ public_path('storage/uploads/products/thumbnail/'.$product->images[0]->thumbnail_image) }}" alt="">
+                    @if(is_file(public_path('storage/uploads/products/main/'.$product->images[0]->large_image)))
+                        @if(substr(strrchr($product->images[0]->large_image,'.'),1) === 'jpg')
+                            <img height="80px" width="80px" src="{{ public_path('storage/uploads/products/main/'.$product->images[0]->large_image) }}" alt="">
                         @endif
                     @else
                         <img height="80px" width="80px" src="{{ public_path() }}/assets/placeholder.png" alt="">
