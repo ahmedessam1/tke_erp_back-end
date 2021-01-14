@@ -17,7 +17,7 @@
         @foreach($products as $key => $product)
             <tr>
                 <td>
-                    @if($key < 5)
+                    @if($key < 15)
                         @if(is_file(public_path('storage/uploads/products/main/'.$product->images[0]->large_image)))
                             <img height="80px" width="80px" src="{{ public_path('storage/uploads/products/main/'.$product->images[0]->large_image) }}" alt="">
                         @else
@@ -27,7 +27,7 @@
                 </td>
                 <td>{{ $product->name }}</td>
                 <td>{{ $product->code }}</td>
-                <td>{{ $product->barcode }} </td>
+                <td><span>{{ $product->barcode }}</span></td>
                 <td>{{ $product->category->name }}</td>
                 <td>{{ $product->report_total_quantity }}</td>
                 <td>{{ $product->report_avg_purchase_price }}</td>
