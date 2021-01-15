@@ -31,10 +31,11 @@ class EloquentReportProductRepository implements ReportProductRepository {
 
     public function exportProductsCredit ($request) {
         $categories_id = $request->categories_id;
+        $filtering_options = $request->filtering_options;
 
         // STORE ACTION
         event(new ActionHappened('report generate', 'product credits excel export', $this->getAuthUserId()));
-        return Excel::download(new ProductCreditExport($categories_id), date('Y-mm-dd').'.xlsx');
+        return Excel::download(new ProductCreditExport($categories_id, $filtering_options), date('Y-mm-dd').'.xlsx');
     }
 
     public function productHistory ($request) {

@@ -22,7 +22,7 @@ if (!function_exists('resizingTheImage')) {
         // RENAMING THE ORIGINAL IMAGE
         $image_original_name = $image->getClientOriginalName();
         $image_original_extension = $image->getClientOriginalExtension();
-        $new_image_unique_name = uniqueImageName($image_original_name, $image_original_extension);
+        $new_image_unique_name = uniqueImageName($image_original_extension);
 
         // SAVING THE IMAGE IN STORAGE
         $image->storeAs('public/uploads/' . $location, $new_image_unique_name);
@@ -38,12 +38,9 @@ if (!function_exists('resizingTheImage')) {
 }
 
 if (!function_exists('uniqueImageName')) {
-    function uniqueImageName($image_original_name, $image_original_extension)
+    function uniqueImageName($image_original_extension)
     {
-        if (strlen($image_original_name) > 10)
-            $image_original_name = substr($image_original_name, 0, 10);
-
-        return $image_original_name . '_' . time() . '_' . str_random(5) . '.' . $image_original_extension;
+        return time() . '_' . time() . '_' . str_random(5) . '.' . $image_original_extension;
     }
 }
 
@@ -53,7 +50,7 @@ if (!function_exists('uploadFileHelper')) {
         // RENAMING THE ORIGINAL FILE
         $file_original_name = $file->getClientOriginalName();
         $file_original_extension = $file->getClientOriginalExtension();
-        $new_file_unique_name = uniqueImageName($file_original_name, $file_original_extension);
+        $new_file_unique_name = uniqueImageName($file_original_extension);
         $file->storeAs('public/uploads/files/', $new_file_unique_name);
         return $new_file_unique_name;
     }

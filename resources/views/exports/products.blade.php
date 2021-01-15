@@ -1,7 +1,9 @@
 <table class="table">
     <thead>
     <tr>
-        <th>{{ trans('reports.CREDITS.EXCEL_COLUMNS.IMAGE') }}</th>
+        @if(in_array('images', $filtering_options))
+            <th>{{ trans('reports.CREDITS.EXCEL_COLUMNS.IMAGE') }}</th>
+        @endif
         <th>{{ trans('reports.CREDITS.EXCEL_COLUMNS.NAME') }}</th>
         <th>{{ trans('reports.CREDITS.EXCEL_COLUMNS.CODE') }}</th>
         <th>{{ trans('reports.CREDITS.EXCEL_COLUMNS.BARCODE') }}</th>
@@ -16,13 +18,15 @@
     <tbody>
         @foreach($products as $key => $product)
             <tr>
-                <td>
-                    @if(is_file(public_path('storage/uploads/products/main/'.$product->images[0]->large_image)))
-                        <img height="80px" width="80px" src="{{ public_path('storage/uploads/products/main/'.$product->images[0]->large_image) }}" alt="">
-                    @else
-                        <img height="80px" width="80px" src="{{ public_path() }}/assets/placeholder.png" alt="">
-                    @endif
-                </td>
+                @if(in_array('images', $filtering_options))
+                    <td>
+                        @if(is_file(public_path('storage/uploads/products/main/'.$product->images[0]->large_image)))
+                            <img height="80px" width="80px" src="{{ public_path('storage/uploads/products/main/'.$product->images[0]->large_image) }}" alt="">
+                        @else
+                            <img height="80px" width="80px" src="{{ public_path() }}/assets/placeholder.png" alt="">
+                        @endif
+                    </td>
+                @endif
                 <td>{{ $product->name }}</td>
                 <td>{{ $product->code }}</td>
                 <td><span>{{ $product->barcode }}</span></td>

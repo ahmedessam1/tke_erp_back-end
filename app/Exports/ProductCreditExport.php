@@ -12,22 +12,33 @@ class ProductCreditExport implements FromView, ShouldAutoSize
     /**
      * @return \Illuminate\Support\Collection
      */
-    private $categories_id;
+    private $categories_id, $filtering_options;
 
-    public function __construct($categories_id)
+    public function __construct($categories_id, $filtering_options)
     {
         $this->categories_id = $categories_id;
+        $this->filtering_options = $filtering_options;
     }
 
     public function view(): View
     {
+        if(!$this->filtering_options)
+            $this->filtering_options = [];
+
         if ($this->categories_id)
             $products = Product::with('productLog')
                 ->whereIn('category_id', $this->categories_id)
-                ->orderBy('category_id')->get();
+                ->orderBy('category_id');
         else
-            $products = Product::get();
+            $products = Product::with('productLog');
 
-        return view('exports.products', ['products' => $products]);
+        if(in_array('available_quantity', $this->filtering_options))
+            $products = $products->whereHas('productLog', function($q) {
+                $q->where('available_quantity', '>', '0');
+            });
+
+        $products = $products->get();
+
+        return view('exports.products', ['products' => $products, 'filtering_options' => $this->filtering_options]);
     }
 }
