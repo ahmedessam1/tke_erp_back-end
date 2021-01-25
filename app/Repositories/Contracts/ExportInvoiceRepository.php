@@ -43,4 +43,7 @@ interface ExportInvoiceRepository {
     public function invoicesPerUserSearch($request);
 
     public function updateProductSellingPriceInInvoice($product_row_id, $new_price);
+
+    // REPORTS
+    public function reportProfit($item_id);
 }

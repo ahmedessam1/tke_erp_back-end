@@ -14,63 +14,85 @@ use Response;
 class ExportInvoicesController extends Controller
 {
     protected $model;
-    public function __construct(ExportInvoiceRepository $export_invoices) {
+
+    public function __construct(ExportInvoiceRepository $export_invoices)
+    {
         $this->model = $export_invoices;
     }
 
-    public function index (Request $request) {
+    public function index(Request $request)
+    {
         return Response::json($this->model->getAllActiveExportInvoices($request->all()));
     }
 
-    public function search (TableSearchRequest $request) {
+    public function search(TableSearchRequest $request)
+    {
         return Response::json($this->model->getExportInvoicesSearchResult($request->all()));
     }
 
-    public function storeInvoice (InvoiceStoreRequest $request) {
+    public function storeInvoice(InvoiceStoreRequest $request)
+    {
         return Response::json($this->model->storeInvoice($request));
     }
 
-    public function storeInvoiceProducts (InvoiceProductsStoreRequest $request) {
+    public function storeInvoiceProducts(InvoiceProductsStoreRequest $request)
+    {
         return Response::json($this->model->storeInvoiceProducts($request));
     }
 
-    public function removeProductFromInvoice ($invoice_id, $sold_product_id) {
+    public function removeProductFromInvoice($invoice_id, $sold_product_id)
+    {
         return Response::json($this->model->removeProductFromInvoice($invoice_id, $sold_product_id));
     }
 
-    public function show ($export_invoice_id) {
+    public function show($export_invoice_id)
+    {
         return Response::json($this->model->showExportInvoiceDetails($export_invoice_id));
     }
 
-    public function edit ($export_invoice_id) {
+    public function edit($export_invoice_id)
+    {
         return Response::json($this->model->editExportInvoice($export_invoice_id));
     }
 
-    public function update (ExportInvoicesRequest $request, $export_invoice_id) {
+    public function update(ExportInvoicesRequest $request, $export_invoice_id)
+    {
         return Response::json($this->model->updateExportInvoice($request, $export_invoice_id));
     }
 
-    public function delete ($export_invoice_id) {
+    public function delete($export_invoice_id)
+    {
         return Response::json($this->model->deleteExportInvoice($export_invoice_id));
     }
 
-    public function restore ($export_invoice_id) {
+    public function restore($export_invoice_id)
+    {
         return Response::json($this->model->restoreExportInvoice($export_invoice_id));
     }
 
-    public function approve (Request $request, $export_invoice_id) {
+    public function approve(Request $request, $export_invoice_id)
+    {
         return Response::json($this->model->approveExportInvoice($export_invoice_id));
     }
 
-    public function invoicesPerUser (Request $request) {
+    public function invoicesPerUser(Request $request)
+    {
         return Response::json($this->model->invoicesPerUser($request->all()));
     }
 
-    public function invoicesPerUserSearch (TableSearchRequest $request) {
+    public function invoicesPerUserSearch(TableSearchRequest $request)
+    {
         return Response::json($this->model->invoicesPerUserSearch($request->all()));
     }
 
-    public function updateProductSellingPriceInInvoice ($product_row_id, $new_price) {
+    public function updateProductSellingPriceInInvoice($product_row_id, $new_price)
+    {
         return Response::json($this->model->updateProductSellingPriceInInvoice($product_row_id, $new_price));
+    }
+
+    // REPORTS
+    public function reportProfit($item_id)
+    {
+        return Response::json($this->model->reportProfit($item_id));
     }
 }

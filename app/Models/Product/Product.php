@@ -83,10 +83,6 @@ class Product extends Model
         return $this->belongsToMany('App\Models\Category\Subcategory', 'product_subcategories');
     }
 
-    public function seasons () {
-        return $this->belongsToMany('App\Models\Season', 'product_seasons');
-    }
-
     public function images () {
         return $this->hasMany('App\Models\Product\ProductImages')->orderBy('active', 'DESC');
     }
@@ -134,10 +130,6 @@ class Product extends Model
 
     public function scopeWithSubcategories ($builder) {
         return $builder->with('subcategories');
-    }
-
-    public function scopeWithSeasons ($builder) {
-        return $builder->with('seasons');
     }
 
     public function scopeWithCreditsAndWarehouses ($builder) {

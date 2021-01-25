@@ -60,5 +60,11 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/update/selling_price/{product_row_id}/{new_price}', 'ExportInvoicesController@updateProductSellingPriceInInvoice')
             -> name('update_selling_price')
             -> middleware(['role:super_admin|accountant|digital_marketing']);
+
+        // REPORTS
+        // INVOICE PROFIT
+        Route::get('/reports/profit/{item_id}', 'ExportInvoicesController@reportProfit')
+            -> name('report.profit')
+            -> middleware(['role:super_admin']);
     });
 });

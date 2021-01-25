@@ -4,8 +4,11 @@ namespace App\Repositories;
 
 use App\Cache\RedisAdapter;
 use App\Events\TransactionHappened;
+use App\Models\Customer\Customer;
 use App\Models\Customer\CustomerBranch;
+use App\Models\Customer\CustomerContract;
 use App\Models\Customer\CustomerPriceList;
+use App\Models\Product\ProductLog;
 use App\Traits\Logic\InvoiceCalculations;
 use App\Repositories\Contracts\ExportInvoiceRepository;
 use App\Models\Invoices\ExportInvoice;
@@ -304,6 +307,49 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
                 return $invoice;
             }
         });
+    }
+
+    // REPORTS
+    public function reportProfit($item_id)
+    {
+        $invoice = ExportInvoice::withSoldProductsImages()->find($item_id);
+        $invoice_profit_total = 0;
+        foreach($invoice->soldProducts as $product) {
+            // INVOICE DATA
+            $invoice_product_id = $product->product_id;
+            $invoice_product_quantity = $product->quantity;
+            $invoice_product_net_price = $product->item_net_price;
+
+            // LOGGED PRODUCT DATA
+            $product_log = ProductLog::where('product_id', $invoice_product_id)->first();
+            $product_log_purchase_price = $product_log->average_purchase_price;
+
+            // PROFIT
+            $invoice_profit_total += ($invoice_product_net_price - $product_log_purchase_price) * $invoice_product_quantity;
+        }
+        // CUSTOMER CONTRACT DISCOUNT
+        $customer_id = $invoice->customerBranch->customer->id;
+        $customer_contract = CustomerContract::where('customer_id', $customer_id)
+            ->where('year', date('Y', strtotime($invoice->date)))
+            ->orderBy('id',  'DESC')
+            ->first();
+
+        $invoice_net_profit = null;
+        $contract_year = null;
+        $discount_percentage = null;
+        if ($customer_contract) {
+            $discount_percentage = $customer_contract->discount;
+            $invoice_net_profit = $invoice_profit_total * ((100 - $discount_percentage) / 100);
+            $contract_year = $customer_contract->year;
+        }
+        return [
+            'invoice_profit' => round($invoice_profit_total,2),
+            'contract_discount' => [
+                'contract_year' => $contract_year,
+                'discount_percentage' => $discount_percentage,
+                'invoice_net_profit' => round($invoice_net_profit, 2),
+            ],
+        ];
     }
 
     /*

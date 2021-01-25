@@ -14,7 +14,7 @@ class CustomerBranch extends Model
 
     // FILLABLE
     protected $fillable = [
-        'customer_id', 'address', 'discount', 'notes', 'created_by', 'updated_by'
+        'customer_id', 'address', 'notes', 'created_by', 'updated_by'
     ];
 
     // APPENDS

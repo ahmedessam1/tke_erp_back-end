@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Customer\ContractRequest;
 use App\Http\Requests\Customer\CustomerAddBranchRequest;
 use App\Http\Requests\Customer\CustomersPaymentRequest;
 use App\Http\Requests\Customer\CustomerUpdateRequest;
@@ -141,5 +142,26 @@ class CustomersController extends Controller
     protected function priceListExport(Request $request)
     {
         return Excel::download(new \App\Exports\CustomerProductList($request->customer_id), date('Y-mm-dd').'.xlsx');
+    }
+
+
+    /* *********************************************
+     * ************ CUSTOMER CONTRACTS *************
+     * *********************************************/
+    public function contractIndex (Request $request) {
+        return Response::json($this->model->contractIndex($request->all()));
+    }
+
+    public function contractSearch (TableSearchRequest $request) {
+        return Response::json($this->model->contractSearch($request->all()));
+    }
+
+    public function contractStore(ContractRequest $request)
+    {
+        return Response::json($this->model->contractStore($request->all()));
+    }
+
+    public function contractDelete ($item_id) {
+        return Response::json($this->model->contractDelete($item_id));
     }
 }

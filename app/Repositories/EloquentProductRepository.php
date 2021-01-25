@@ -11,7 +11,6 @@ use App\Events\ActionHappened;
 use App\Models\Product\Product;
 use App\Traits\Data\FilterProducts;
 use App\Traits\Data\GetCategoriesList;
-use App\Traits\Data\GetSeasonsList;
 use App\Traits\Logic\GenerateLocalCode;
 use Storage;
 use Auth;
@@ -21,7 +20,6 @@ class EloquentProductRepository implements ProductRepository
 {
     use GenerateLocalCode,
         GetCategoriesList,
-        GetSeasonsList,
         FilterProducts;
 
     protected $cache;
@@ -81,10 +79,8 @@ class EloquentProductRepository implements ProductRepository
     {
         // GETTING CATEGORIES
         $categories = $this->getCategoriesListOrderedByName();
-        // GETTING SEASONS
-        $seasons = $this->getSeasonsListOrderedByName();
         // MERGING
-        $product_requirements = ["categories" => $categories, "seasons" => $seasons];
+        $product_requirements = ["categories" => $categories];
 
         return $product_requirements;
     }
@@ -115,9 +111,6 @@ class EloquentProductRepository implements ProductRepository
 
             // ADDING THE PRODUCT SUBCATEGORIES
             $added_product->subcategories()->attach($request->subcategories_id);
-
-            // ADDING THE PRODUCT SEASONS
-            $added_product->seasons()->attach($request->seasons_id);
 
             // ADDING PRODUCT TO PRODUCTS LOG WITH EMPTY DATA
             $product_log = ProductLog::create(['product_id' => $added_product->id]);
@@ -191,10 +184,6 @@ class EloquentProductRepository implements ProductRepository
             $product->subcategories()->detach();
             $product->subcategories()->attach($request->subcategories_id);
 
-            // UPDATING PRODUCT SEASONS
-            $product->seasons()->detach();
-            $product->seasons()->attach($request->seasons_id);
-
             // UPDATING THE PRODUCT
             $product_fillable_values = array_merge(
                 $request->all(),
@@ -241,7 +230,6 @@ class EloquentProductRepository implements ProductRepository
             ->orderedName()
             ->withCategory()
             ->withSubcategories()
-            ->withSeasons()
             ->withImages()
             ->withLocalCode();
     }

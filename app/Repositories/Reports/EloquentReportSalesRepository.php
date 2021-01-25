@@ -6,6 +6,7 @@ use App\Cache\RedisAdapter;
 use App\Exports\CustomersStatementExport;
 use App\Models\Customer\Customer;
 use App\Models\Customer\CustomerBranch;
+use App\Models\Customer\CustomerContract;
 use App\Models\Customer\CustomerInitiatoryCredit;
 use App\Models\Customer\CustomerPayment;
 use App\Models\Expenses\Expenses;
@@ -159,6 +160,7 @@ class EloquentReportSalesRepository implements ReportSalesRepository
 
     public function customersStatement($customers_id, $from_date, $to_date)
     {
+        $this->cache->forget('customers_statement:' . implode(':', $customers_id) . $from_date . $to_date);
         $result = $this->cache->remember('customers_statement:' . implode(':', $customers_id) . $from_date . $to_date,
             function () use ($customers_id, $from_date, $to_date) {
 
@@ -217,11 +219,24 @@ class EloquentReportSalesRepository implements ReportSalesRepository
                             $description = $payment->check_number;
                         else
                             $description = $payment->notes;
+
+                        // SUBTRACTING CONTRACT PERCENTAGE FROM PAYMENTS
+                        $contract = CustomerContract::where('customer_id', $customers_id[$x])
+                            ->where('year', date('Y', strtotime($payment->date)))
+                            ->orderBy('id',  'DESC')
+                            ->first();
+
+                        $payment_amount = $payment->amount;
+                        if($contract) {
+                            $payment_amount = $payment_amount * ((100 - $contract->discount) / 100);
+                            $description .= '('.trans('reports.CUSTOMERS.CONTRACT_DISCOUNT').'%'.$contract->discount.')';
+                        }
+
                         array_push($holder, [
                             'type' => 'payment',
                             'branch_name' => $customer->name,
                             'invoice_number' => $description,
-                            'total' => $payment->amount,
+                            'total' => $payment_amount,
                             'date' => $payment->date
                         ]);
                     }

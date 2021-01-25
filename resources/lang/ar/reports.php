@@ -15,5 +15,9 @@ return [
             'TOTAL_CREDIT'  => 'قيمة المخزون',
             'PRICE' => 'السعر',
         ]
-    ]
+    ],
+    // CUSTOMERS
+    'CUSTOMERS' => [
+        'CONTRACT_DISCOUNT' => 'مضاف خصم عقد',
+    ],
 ];

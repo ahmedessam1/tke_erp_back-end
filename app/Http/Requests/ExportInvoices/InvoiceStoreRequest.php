@@ -30,7 +30,6 @@ class InvoiceStoreRequest extends FormRequest
                     |min:'.trans('validation_standards.names.min').'
                     |max:'.trans('validation_standards.names.max'),
             'number' => 'required
-                        |numeric
                         |unique:export_invoices,number,'.$this -> export_invoice_id.',id,deleted_at,NULL',
             'customer_branch_id' => 'required|exists:customer_branches,id',
             'seller_id' => 'required|exists:users,id',
@@ -53,7 +52,6 @@ class InvoiceStoreRequest extends FormRequest
             // NUMBER VALIDATION
             'number.required' => trans('form_responses.export_invoices_validation.number.required'),
             'number.unique'   => trans('form_responses.export_invoices_validation.number.unique'),
-            'number.numeric'  => trans('form_responses.export_invoices_validation.number.numeric'),
 
             // CUSTOMER BRANCH ID VALIDATION
             'customer_branch_id.required' => trans('form_responses.export_invoices_validation.customer_branch_id.required'),

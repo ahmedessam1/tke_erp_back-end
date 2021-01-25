@@ -114,5 +114,22 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('/price_list/export', 'CustomersController@priceListExport')
             -> name('price_list.add_product')
             -> middleware(['role:super_admin']);
+
+
+        /* *********************************************
+         * ************* CUSTOMER CONTRACT *************
+         * *********************************************/
+        Route::get('/contracts/list', 'CustomersController@contractIndex')
+            -> name('contracts.index')
+            -> middleware(['role:super_admin']);
+        Route::get('/contracts/list/search', 'CustomersController@contractSearch')
+            -> name('contracts.search')
+            -> middleware(['role:super_admin']);
+        Route::post('/contracts/store', 'CustomersController@contractStore')
+            -> name('contracts.store')
+            -> middleware(['role:super_admin']);
+        Route::delete('/contracts/delete/{item_id}', 'CustomersController@contractDelete')
+            -> name('contracts.delete')
+            -> middleware(['role:super_admin']);
     });
 });

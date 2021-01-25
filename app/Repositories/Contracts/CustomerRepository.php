@@ -78,4 +78,13 @@ interface CustomerRepository {
      ***********************************/
     public function priceListCustomers($request);
     public function priceListCustomersSearch($request);
+
+
+    /************************************
+     * ****** CUSTOMERS CONTRACTS *******
+     ***********************************/
+    public function contractIndex($request);
+    public function contractSearch($request);
+    public function contractStore($request);
+    public function contractDelete($item_id);
 }

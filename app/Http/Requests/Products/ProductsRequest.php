@@ -46,9 +46,6 @@ class ProductsRequest extends FormRequest
 
             'subcategories_id' => [ 'required', 'exists:subcategories,id', new SubcategoryMatchCategory($this -> _method, $this -> category_id) ],
 
-            'seasons_id'    => 'required
-                                |exists:seasons,id',
-
             'image'         => $required.'image|mimes:'.trans('validation_standards.images.extensions').'
                                 |max:'.trans('validation_standards.images.file_size'),
 
@@ -82,10 +79,6 @@ class ProductsRequest extends FormRequest
             // SUBCATEGORIES ID
             'subcategories_id.required'  => trans('form_responses.products_validation.subcategories_id.required'),
             'subcategories_id.exists'    => trans('form_responses.products_validation.subcategories_id.exists'),
-
-            // SEASONS ID
-            'seasons_id.required'  => trans('form_responses.products_validation.seasons_id.required'),
-            'seasons_id.exists'    => trans('form_responses.products_validation.seasons_id.exists'),
 
             // IMAGE
             'image.required'    => trans('form_responses.products_validation.image.required'),

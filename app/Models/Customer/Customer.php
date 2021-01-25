@@ -25,12 +25,24 @@ class Customer extends Model
      * Users.php trait contain:
      * created_by and Updated_by relationships
      */
-    public function branches () {
-        return $this -> hasMany('App\Models\Customer\CustomerBranch');
+    public function branches()
+    {
+        return $this->hasMany('App\Models\Customer\CustomerBranch');
+    }
+
+    public function contract()
+    {
+        return $this->hasMany('App\Models\Customer\CustomerContract');
     }
 
     // SCOPES
-    public function scopeGetBranchesDetails (Builder $builder) {
-        return $builder -> with('branches.contacts') -> with('branches.sellers');
+    public function scopeGetBranchesDetails(Builder $builder)
+    {
+        return $builder->with('branches.contacts')->with('branches.sellers');
+    }
+
+    public function scopeWithYearContract(Builder $builder)
+    {
+        return $builder->with('contract');
     }
 }
