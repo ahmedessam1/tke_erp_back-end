@@ -63,4 +63,7 @@ return [
             'total' => 'اجمالي',
         ]
     ],
+    'file_names' => [
+        'CUSTOMERS_PRICE_LIST' => 'قائمة اسعار',
+    ],
 ];

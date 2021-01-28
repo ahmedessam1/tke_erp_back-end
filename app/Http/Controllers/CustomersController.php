@@ -7,6 +7,7 @@ use App\Http\Requests\Customer\CustomerAddBranchRequest;
 use App\Http\Requests\Customer\CustomersPaymentRequest;
 use App\Http\Requests\Customer\CustomerUpdateRequest;
 use App\Imports\CustomerProductList;
+use App\Models\Customer\Customer;
 use App\Repositories\Contracts\CustomerRepository;
 use App\Http\Requests\Customer\CustomerRequest;
 use App\Http\Requests\TableSearchRequest;
@@ -139,9 +140,11 @@ class CustomersController extends Controller
         return Response::json(true, 200);
     }
 
-    protected function priceListExport(Request $request)
+    public function priceListExport(Request $request)
     {
-        return Excel::download(new \App\Exports\CustomerProductList($request->customer_id), date('Y-mm-dd').'.xlsx');
+        $customer = Customer::select('name')->find($request->customer_id);
+        return Excel::download(new \App\Exports\CustomerProductList($request->customer_id),
+            trans('excel.file_names.CUSTOMERS_PRICE_LIST') . ' ' . $customer->name . '.xlsx');
     }
 
 

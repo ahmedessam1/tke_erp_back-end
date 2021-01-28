@@ -5,6 +5,7 @@ namespace App\Exports;
 use App\Models\Invoices\ImportInvoice;
 use App\Models\Product\Product;
 use App\Models\Product\ProductCredits;
+use App\Models\Product\ProductLog;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -25,24 +26,19 @@ class SupplierProductCreditExport implements FromCollection, WithMapping, WithHe
     {
         $supplier_id = $this->supplier_id;
         $invoices_ids = ImportInvoice::where('supplier_id', $supplier_id)->pluck('id');
-        $products = ProductCredits::withProductAndImages()
-            ->withImportInvoice()
-            ->whereIn('import_invoice_id', $invoices_ids)
-            ->select(DB::raw('SUM(quantity * purchase_price) / SUM(quantity) as average_purchase_price, sum(quantity) as quantity, product_id'))
-            ->groupBy('product_id')
-            ->get();
-
+        $products_ids = ProductCredits::whereIn('import_invoice_id', $invoices_ids)->pluck('product_id');
+        $products = Product::withProductLog()->whereIn('id', $products_ids)->get();
         return $products;
     }
 
     public function map($products): array {
         return [
-            $products->product->name,
-            $products->product->code,
+            $products->name,
+            $products->code,
             // ADDING WHITE SPACE AFTER BARCODE TO TREAT IT AS STRING IN EXCEL
-            $products->product->barcode." ",
-            $products->quantity,
-            round($products->average_purchase_price, 3),
+            $products->barcode." ",
+            $products->productLog->available_quantity,
+            round($products->productLog->average_purchase_price, 3),
         ];
     }
 
