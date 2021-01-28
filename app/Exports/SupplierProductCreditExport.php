@@ -9,6 +9,7 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use DB;
 
 class SupplierProductCreditExport implements FromCollection, WithMapping, WithHeadings, ShouldAutoSize
 {
@@ -20,31 +21,16 @@ class SupplierProductCreditExport implements FromCollection, WithMapping, WithHe
         $this->supplier_id = $supplier_id;
     }
 
-//    public function collection()
-//    {
-//        $supplier_id = $this->supplier_id;
-//        $product_credits = ProductCredits::whereHas('importInvoice', function($q) use ($supplier_id) {
-//            $q->where('supplier_id', $supplier_id);
-//        })->get();
-//        $product_unique_ids = [];
-//        foreach($product_credits as $p_c) {
-//            if (!in_array($p_c->product_id, $product_unique_ids))
-//                array_push($product_unique_ids, $p_c->product_id);
-//        }
-//
-//        $products = Product::whereIn('id', $product_unique_ids)
-//            ->whereHas('productLog', function ($q) {
-//                $q->where('available_quantity', '>', 0);
-//            })
-//            ->get();
-//
-//        return $products;
-//    }
     public function collection()
     {
         $supplier_id = $this->supplier_id;
         $invoices_ids = ImportInvoice::where('supplier_id', $supplier_id)->pluck('id');
-        $products = ProductCredits::withProductAndImages()->withImportInvoice()->whereIn('import_invoice_id', $invoices_ids)->orderBy('product_id', 'DESC')->get();
+        $products = ProductCredits::withProductAndImages()
+            ->withImportInvoice()
+            ->whereIn('import_invoice_id', $invoices_ids)
+            ->select(DB::raw('SUM(quantity * purchase_price) / SUM(quantity) as average_purchase_price, sum(quantity) as quantity, product_id'))
+            ->groupBy('product_id')
+            ->get();
 
         return $products;
     }
@@ -56,10 +42,7 @@ class SupplierProductCreditExport implements FromCollection, WithMapping, WithHe
             // ADDING WHITE SPACE AFTER BARCODE TO TREAT IT AS STRING IN EXCEL
             $products->product->barcode." ",
             $products->quantity,
-            $products->item_net_price,
-            // INVOICE DATA
-            $products->importInvoice->number,
-            $products->importInvoice->date,
+            round($products->average_purchase_price, 3),
         ];
     }
 
@@ -70,9 +53,6 @@ class SupplierProductCreditExport implements FromCollection, WithMapping, WithHe
             trans('reports.CREDITS.EXCEL_COLUMNS.BARCODE'),
             trans('reports.CREDITS.EXCEL_COLUMNS.QUANTITY'),
             trans('reports.CREDITS.EXCEL_COLUMNS.PURCHASE_PRICE'),
-            // INVOICE DATA
-            trans('reports.CREDITS.EXCEL_COLUMNS.INVOICE_NUMBER'),
-            trans('reports.CREDITS.EXCEL_COLUMNS.INVOICE_DATE'),
         ];
     }
 }
