@@ -327,8 +327,6 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
             // PROFIT
             if ($invoice_product_net_price != 0)
                 $invoice_profit_total += ($invoice_product_net_price - $product_log_purchase_price) * $invoice_product_quantity;
-            else
-                $invoice_profit_total -= ($product_log_purchase_price * $invoice_product_quantity);
         }
         // CUSTOMER CONTRACT DISCOUNT
         $customer_id = $invoice->customerBranch->customer->id;
