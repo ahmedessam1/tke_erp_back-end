@@ -318,17 +318,14 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
             // INVOICE DATA
             $invoice_product_id = $product->product_id;
             $invoice_product_quantity = $product->quantity;
-            $invoice_product_net_price = $product->item_net_price;
+            $invoice_product_net_price = $product->sold_price;
 
             // LOGGED PRODUCT DATA
             $product_log = ProductLog::where('product_id', $invoice_product_id)->first();
             $product_log_purchase_price = $product_log->average_purchase_price;
 
             // PROFIT
-            if ($invoice_product_net_price != 0)
-                $invoice_profit_total += ($invoice_product_net_price - $product_log_purchase_price) * $invoice_product_quantity;
-            else
-                $invoice_profit_total -= ($product_log_purchase_price * $invoice_product_quantity);
+            $invoice_profit_total += ($invoice_product_net_price - $product_log_purchase_price) * $invoice_product_quantity;
         }
         // CUSTOMER CONTRACT DISCOUNT
         $customer_id = $invoice->customerBranch->customer->id;
