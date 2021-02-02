@@ -48,4 +48,15 @@ class ProductsReportController extends Controller
         // RETURNING THE EXCEL DATA
         return $this->model->exportSupplierProductsCredit($request);
     }
+
+    public function sales(Request $request)
+    {
+        $this->validate($request, [
+            'category_id' => 'required|exists:categories,id',
+            'from_date' => 'required|date',
+            'to_date' => 'required|date',
+        ]);
+        // RETURNING THE EXCEL DATA
+        return $this->model->sales($request);
+    }
 }

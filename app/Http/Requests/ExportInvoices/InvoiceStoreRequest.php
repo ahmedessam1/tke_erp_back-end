@@ -3,6 +3,7 @@
 namespace App\Http\Requests\ExportInvoices;
 
 use App\Rules\ExportInvoices\SellerMatchBranch;
+use App\Rules\InvoicesNumberRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class InvoiceStoreRequest extends FormRequest
@@ -29,8 +30,7 @@ class InvoiceStoreRequest extends FormRequest
             'name' => 'required
                     |min:'.trans('validation_standards.names.min').'
                     |max:'.trans('validation_standards.names.max'),
-            'number' => 'required
-                        |unique:export_invoices,number,'.$this -> export_invoice_id.',id,deleted_at,NULL',
+            'number' => ['required', new InvoicesNumberRule($this->tax, null)],
             'customer_branch_id' => 'required|exists:customer_branches,id',
             'seller_id' => 'required|exists:users,id',
             'tax' => 'required|boolean',

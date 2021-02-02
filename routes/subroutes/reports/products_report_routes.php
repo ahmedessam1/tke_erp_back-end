@@ -30,5 +30,10 @@ Route::middleware(['auth:api'])->group(function () {
         Route::post('/supplier/products/credits_export', 'Reports\ProductsReportController@exportSupplierProductsCredit')
             -> name('supplier.products.credits_export')
             -> middleware(['role:super_admin|accountant']);
+
+        // CATEGORY SALES WITHIN TIME RANGE
+        Route::post('/sales', 'Reports\ProductsReportController@sales')
+            -> name('sales')
+            -> middleware(['role:super_admin']);
     });
 });

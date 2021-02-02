@@ -20,4 +20,7 @@ interface ReportProductRepository {
 
     // REPORT EXPORT EXCEL THAT CONTAIN THE SUPPLIER PRODUCTS CREDIT
     public function exportSupplierProductsCredit($request);
+
+    // PRODUCTS SALES BY CATEGORY WITHIN TIME RANGE
+    public function sales($request);
 }

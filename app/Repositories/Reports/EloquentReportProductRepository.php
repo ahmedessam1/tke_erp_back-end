@@ -197,7 +197,23 @@ class EloquentReportProductRepository implements ReportProductRepository {
         return Excel::download(new SupplierProductCreditExport($supplier_id), date('Y-mm-dd').'.xlsx');
     }
 
-
+    /**
+     * @param $request
+     * @return
+     */
+    public function sales($request)
+    {
+        $category_id = $request->category_id;
+        $from_date = $request->from_date;
+        $to_date = $request->to_date;
+        $product_ids = Product::where('category_id', $category_id)->pluck('id');
+        $sales = ExportInvoice::whereBetween('date', [$from_date, $to_date])
+        ->whereHas('soldProducts', function ($q) use ($product_ids) {
+            $q->whereIn('product_id', $product_ids);
+        })
+        ->get();
+        return $sales;
+    }
     /*
      * **************************************************
      * ********** PRIVATE HELPERS FUNCTIONS *************

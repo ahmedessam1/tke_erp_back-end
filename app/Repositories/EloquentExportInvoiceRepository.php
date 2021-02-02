@@ -8,6 +8,7 @@ use App\Models\Customer\Customer;
 use App\Models\Customer\CustomerBranch;
 use App\Models\Customer\CustomerContract;
 use App\Models\Customer\CustomerPriceList;
+use App\Models\Product\ProductCredits;
 use App\Models\Product\ProductLog;
 use App\Traits\Logic\InvoiceCalculations;
 use App\Repositories\Contracts\ExportInvoiceRepository;
@@ -321,8 +322,10 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
             $invoice_product_net_price = $product->sold_price;
 
             // LOGGED PRODUCT DATA
-            $product_log = ProductLog::where('product_id', $invoice_product_id)->first();
-            $product_log_purchase_price = $product_log->average_purchase_price;
+            $product_log = ProductCredits::where('product_id', $invoice_product_id)->orderBy('id', 'DESC')->first();
+            $product_log_purchase_price = $product_log->purchase_price;
+            if($product_log->discount > 0)
+                $product_log_purchase_price = $product_log_purchase_price - ($product_log_purchase_price * ($product_log->discount/100));
 
             // PROFIT
             $invoice_profit_total += ($invoice_product_net_price - $product_log_purchase_price) * $invoice_product_quantity;

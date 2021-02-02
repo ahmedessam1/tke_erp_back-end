@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Rules\ExportInvoices\QuantityMinValue;
 use App\Rules\ExportInvoices\SellerMatchBranch;
 use App\Rules\ExportInvoices\SellingPriceMin;
+use App\Rules\InvoicesNumberRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ExportInvoicesRequest extends FormRequest
@@ -31,9 +32,7 @@ class ExportInvoicesRequest extends FormRequest
                                     |min:'.trans('validation_standards.names.min').'
                                     |max:'.trans('validation_standards.names.max'),
 
-            'invoice_data.number' => 'required
-                                    |numeric
-                                    |unique:export_invoices,number,'.$this -> export_invoice_id,
+            'invoice_data.number' => ['required', new InvoicesNumberRule($this->tax, $this->export_invoice_id)],
 
             'invoice_data.customer_branch_id' => 'required|exists:customer_branches,id',
 
