@@ -4,7 +4,7 @@ return [
     // NAMES
     'names' => [
         'min' => '3',
-        'max' => '120',
+        'max' => '220',
     ],
     // CODE
     'code' => [
