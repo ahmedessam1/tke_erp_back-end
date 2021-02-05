@@ -566,7 +566,11 @@ return [
             'history' => [
                 'date' => 'يجب اختيار التاريخ.',
                 'product_id' => 'يجب اختيار الصنف.',
-            ]
+            ],
+            'category_sales' => [
+                'date' => 'يجب اختيار التاريخ.',
+                'category_id' => 'يجب اختيار الفئة.',
+            ],
         ],
         'sales' => [
             'customer_branch_products_withdrawals' => [

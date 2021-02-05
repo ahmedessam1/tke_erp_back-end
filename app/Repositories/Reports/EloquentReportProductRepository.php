@@ -207,12 +207,37 @@ class EloquentReportProductRepository implements ReportProductRepository {
         $from_date = $request->from_date;
         $to_date = $request->to_date;
         $product_ids = Product::where('category_id', $category_id)->pluck('id');
-        $sales = ExportInvoice::whereBetween('date', [$from_date, $to_date])
-        ->whereHas('soldProducts', function ($q) use ($product_ids) {
-            $q->whereIn('product_id', $product_ids);
-        })
-        ->get();
-        return $sales;
+        $sales = DB::table('sold_products')
+            ->join('export_invoices', 'sold_products.export_invoice_id', '=', 'export_invoices.id')
+            ->join('products', 'sold_products.product_id', '=', 'products.id')
+            ->join('product_images', function($join) {
+                $join->on('sold_products.product_id', '=', 'product_images.product_id')->where('product_images.active', 1);
+            })
+            ->whereNull('export_invoices.deleted_at')
+            ->where('export_invoices.approve', 1)
+            ->whereIn('sold_products.product_id', $product_ids)
+            ->whereNull('sold_products.deleted_at')
+            ->whereBetween('export_invoices.date', [$from_date, $to_date])
+            ->select(
+                'products.id', 'products.name', 'product_images.thumbnail_image', 'products.code',
+                DB::raw('SUM(quantity) as quantity'),
+                DB::raw('SUM(
+                ((sold_price * quantity) - ((sold_price * quantity) * sold_products.discount / 100))
+                -
+                (((sold_price * quantity) - ((sold_price * quantity) * sold_products.discount / 100))) * ((export_invoices.discount / 100))
+                ) as sales')
+            )
+            ->groupBy('products.id', 'products.name', 'product_images.thumbnail_image', 'products.code')
+            ->orderBy('quantity', 'DESC')
+            ->get();
+        $counter = count($sales);
+        $total_sales = 0;
+        for($x = 0; $x < $counter;  $x++)
+            $total_sales += $sales[$x]->sales;
+        return [
+            'sales_details' => $sales,
+            'total_sales' => round($total_sales, 2),
+        ];
     }
     /*
      * **************************************************

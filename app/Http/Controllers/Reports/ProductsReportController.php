@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Reports;
 
+use App\Http\Requests\Reports\ProductsReports\CategorySalesReportRequest;
 use App\Http\Requests\Reports\ProductsReports\HistoryRequest;
 use App\Repositories\Reports\Contracts\ReportProductRepository;
 use Illuminate\Http\Request;
@@ -49,13 +50,8 @@ class ProductsReportController extends Controller
         return $this->model->exportSupplierProductsCredit($request);
     }
 
-    public function sales(Request $request)
+    public function sales(CategorySalesReportRequest $request)
     {
-        $this->validate($request, [
-            'category_id' => 'required|exists:categories,id',
-            'from_date' => 'required|date',
-            'to_date' => 'required|date',
-        ]);
         // RETURNING THE EXCEL DATA
         return $this->model->sales($request);
     }
