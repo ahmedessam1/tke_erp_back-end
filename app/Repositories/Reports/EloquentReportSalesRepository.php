@@ -52,12 +52,14 @@ class EloquentReportSalesRepository implements ReportSalesRepository
         if ($customer_id !== null) {
             $branches_ids = CustomerBranch::where('customer_id', $customer_id)->pluck('id')->toArray();
             $export_invoices = ExportInvoice::withSoldProductsImages()
+                ->approved()
                 ->withSeller()
                 ->whereIn('customer_branch_id', $branches_ids)
                 ->whereBetween('date', [$request->from_date, $request->to_date])
                 ->get();
         } else if ($customer_branch_id !== null)
             $export_invoices = ExportInvoice::withSoldProductsImages()
+                ->approved()
                 ->withSeller()
                 ->where('customer_branch_id', $request->customer_branch_id)
                 ->whereBetween('date', [$request->from_date, $request->to_date])
