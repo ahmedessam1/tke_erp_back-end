@@ -145,10 +145,11 @@ trait SellersProgress
 
         $month_and_sum = [];
         $counter = count($customer_branch_ids);
+        dd($customer_branch_ids);
 
         for ($i = 0; $i < $counter; $i++) {
             $holder = [];
-            $customer = 'aaa';
+            $customer = CustomerBranch::find($customer_branch_ids[$i])->customer_and_branch;
 
             for ($x = 0; $x < 12; $x++) {
                 $sum = 0;
