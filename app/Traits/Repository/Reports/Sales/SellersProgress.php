@@ -147,48 +147,44 @@ trait SellersProgress
         $counter = count($customer_branch_ids);
 
         for ($i = 0; $i < $counter; $i++) {
-            try {
-                $holder = [];
-                $customer = CustomerBranch::find($customer_branch_ids[$i])->customer_and_branch;
+            $holder = [];
+            $customer = CustomerBranch::find($customer_branch_ids[$i])->customer_and_branch;
 
-                for ($x = 0; $x < 12; $x++) {
-                    $sum = 0;
+            for ($x = 0; $x < 12; $x++) {
+                $sum = 0;
 
-                    if (in_array('sales', $types)) {
-                        $data = ExportInvoice::withCustomerBranch()
-                            ->where('customer_branch_id', $customer_branch_ids[$i])
-                            ->where('seller_id', $seller_id)
-                            ->approved()
-                            ->whereYear('date', $year)
-                            ->whereMonth('date', $x + 1)
-                            ->get();
+                if (in_array('sales', $types)) {
+                    $data = ExportInvoice::withCustomerBranch()
+                        ->where('customer_branch_id', $customer_branch_ids[$i])
+                        ->where('seller_id', $seller_id)
+                        ->approved()
+                        ->whereYear('date', $year)
+                        ->whereMonth('date', $x + 1)
+                        ->get();
 
-                        foreach ($data as $d)
-                            $sum += $d->total_after_tax;
-                    }
-
-                    if (in_array('refunds', $types)) {
-                        $data = Refund::approved()
-                            ->where('assigned_user_id', $seller_id)
-                            ->where('model_id', $customer_branch_ids[$i])
-                            ->where('type', 'in')
-                            ->whereYear('date', $year)
-                            ->whereMonth('date', $x + 1)
-                            ->get();
-
-                        foreach ($data as $d)
-                            $sum -= $d->total_after_tax;
-                    }
-
-                    array_push($holder, [
-                        'sum' => round($sum),
-                        'customer' => $customer,
-                    ]);
+                    foreach ($data as $d)
+                        $sum += $d->total_after_tax;
                 }
-                array_push($month_and_sum, $holder);
-            } catch (\Exception $e) {
-                dd($customer_branch_ids);
+
+                if (in_array('refunds', $types)) {
+                    $data = Refund::approved()
+                        ->where('assigned_user_id', $seller_id)
+                        ->where('model_id', $customer_branch_ids[$i])
+                        ->where('type', 'in')
+                        ->whereYear('date', $year)
+                        ->whereMonth('date', $x + 1)
+                        ->get();
+
+                    foreach ($data as $d)
+                        $sum -= $d->total_after_tax;
+                }
+
+                array_push($holder, [
+                    'sum' => round($sum),
+                    'customer' => $customer,
+                ]);
             }
+            array_push($month_and_sum, $holder);
         }
 
         return $month_and_sum;
