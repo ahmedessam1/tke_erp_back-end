@@ -151,7 +151,9 @@ trait SellersProgress
 
             for ($x = 0; $x < 12; $x++) {
                 $sum = 0;
-                $customer = CustomerBranch::find($customer_branch_ids[$i])->customer_and_branch;
+                $customer = CustomerBranch::find($customer_branch_ids[$i]);
+                if ($customer)
+                    $customer = $customer->customer_and_branch;
 
                 if (in_array('sales', $types)) {
                     $data = ExportInvoice::withCustomerBranch()
