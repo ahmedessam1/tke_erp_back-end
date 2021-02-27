@@ -145,6 +145,7 @@ trait SellersProgress
 
         $month_and_sum = [];
         $counter = count($customer_branch_ids);
+        dd($customer_branch_ids[$counter-1]);
 
         for ($i = 0; $i < $counter; $i++) {
             $holder = [];
@@ -152,7 +153,6 @@ trait SellersProgress
             for ($x = 0; $x < 12; $x++) {
                 $sum = 0;
                 $customer = CustomerBranch::find($customer_branch_ids[$i])->customer_and_branch;
-                dd($counter);
 
                 if (in_array('sales', $types)) {
                     $data = ExportInvoice::withCustomerBranch()
