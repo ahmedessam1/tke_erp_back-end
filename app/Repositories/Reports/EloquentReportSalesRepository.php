@@ -309,7 +309,7 @@ class EloquentReportSalesRepository implements ReportSalesRepository
                     'branches_sales' => $this->getSellerProgressBranchesSalesAndRefunds($seller_id, $year, ['sales']),
                     'branches_refunds' => $this->getSellerProgressBranchesSalesAndRefunds($seller_id, $year, ['refunds']),
                     'branches_profit' => $this->getSellerProgressBranchesSalesAndRefunds($seller_id, $year, ['sales', 'refunds']),
-                    'sales_per_category' => $this->sellerSalesPerCategory($seller_id, $year),
+//                    'sales_per_category' => $this->sellerSalesPerCategory($seller_id, $year),
                 ]);
 
                 return json_encode($data);
