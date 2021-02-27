@@ -141,7 +141,7 @@ trait SellersProgress
 
         $merged_array = array_merge($sale_ids, $refund_ids);
 
-        $customer_branch_ids = array_unique($merged_array);
+        $customer_branch_ids = array_values(array_unique($merged_array));
 
         $month_and_sum = [];
         $counter = count($customer_branch_ids);
