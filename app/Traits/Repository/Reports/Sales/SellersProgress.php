@@ -144,9 +144,8 @@ trait SellersProgress
         $customer_branch_ids = array_unique($merged_array);
 
         $month_and_sum = [];
-        $counter = count($customer_branch_ids);
 
-        for ($i = 0; $i < $counter; $i++) {
+        for ($i = 0; $i < count($customer_branch_ids); $i++) {
             try {
                 $holder = [];
                 $customer = CustomerBranch::find($customer_branch_ids[$i])->customer_and_branch;
