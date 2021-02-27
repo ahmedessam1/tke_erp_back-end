@@ -145,7 +145,6 @@ trait SellersProgress
 
         $month_and_sum = [];
         $counter = count($customer_branch_ids);
-        dd($customer_branch_ids[$counter-1]);
 
         for ($i = 0; $i < $counter; $i++) {
             $holder = [];
@@ -163,7 +162,6 @@ trait SellersProgress
                         ->whereMonth('date', $x + 1)
                         ->get();
 
-                    $customer = CustomerBranch::find($customer_branch_ids[$i])->customer_and_branch;
                     foreach ($data as $d)
                         $sum += $d->total_after_tax;
                 }
