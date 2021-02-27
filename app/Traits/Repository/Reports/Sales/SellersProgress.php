@@ -187,7 +187,7 @@ trait SellersProgress
                 }
                 array_push($month_and_sum, $holder);
             } catch (\Exception $e) {
-                dd("error in: ".$i." -- ".$counter);
+                dd($customer_branch_ids);
             }
         }
 
