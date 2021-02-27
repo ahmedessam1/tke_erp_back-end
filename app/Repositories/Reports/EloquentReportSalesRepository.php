@@ -306,9 +306,9 @@ class EloquentReportSalesRepository implements ReportSalesRepository
                     'sales_invoices' => $sales_invoices,
                     'refunds_invoices' => $refunds_invoices,
                     'customers_progress_percentage' => $this->getSellerProgressPerCustomerPercentage($sales_invoices),
-//                    'branches_sales' => $this->getSellerProgressBranchesSalesAndRefunds($seller_id, $year, ['sales']),
-//                    'branches_refunds' => $this->getSellerProgressBranchesSalesAndRefunds($seller_id, $year, ['refunds']),
-//                    'branches_profit' => $this->getSellerProgressBranchesSalesAndRefunds($seller_id, $year, ['sales', 'refunds']),
+                    'branches_sales' => $this->getSellerProgressBranchesSalesAndRefunds($seller_id, $year, ['sales']),
+                    'branches_refunds' => $this->getSellerProgressBranchesSalesAndRefunds($seller_id, $year, ['refunds']),
+                    'branches_profit' => $this->getSellerProgressBranchesSalesAndRefunds($seller_id, $year, ['sales', 'refunds']),
                     'sales_per_category' => $this->sellerSalesPerCategory($seller_id, $year),
                 ]);
 
