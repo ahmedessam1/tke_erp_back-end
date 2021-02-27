@@ -20,9 +20,6 @@ class CreateProductImagesTable extends Migration
             $table->string('large_image', trans('validation_standards.images_name.size'));
             $table->string('thumbnail_image', trans('validation_standards.images_name.size'));
             $table->boolean('active')->default(0);
-
-            // PRODUCT
-            $table->foreign('product_id')->references('id')->on('products');
         });
     }
 

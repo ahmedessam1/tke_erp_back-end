@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Traits\Eloquent\Sorting;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Scout\Searchable;
+use DB;
 
 class Product extends Model
 {
@@ -34,9 +35,10 @@ class Product extends Model
     // DATES
     protected $dates = ['deleted_at'];
 
-    // SCOUT ELASTICSEARCH SEARCH
+    // SCOUT ALGOLIA SEARCH
     public function searchableAs() {
-        return 'products';
+        // SEARCH INDICE BASED ON LOGGED USER TENANT DOMAIN
+        return DB::connection('landlord')->table('tenants')->where('id', Auth::user()->tenant_id)->first()->domain;
     }
 
     public function toSearchableArray() {

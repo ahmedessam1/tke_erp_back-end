@@ -6,6 +6,7 @@ use App\Cache\RedisAdapter;
 use App\Events\ActionHappened;
 use App\Exports\ProductCreditExport;
 use App\Exports\SupplierProductCreditExport;
+use App\Models\Category\Category;
 use App\Models\Invoices\ExportInvoice;
 use App\Models\Product\Product;
 use App\Models\Product\ProductCredits;
@@ -206,6 +207,7 @@ class EloquentReportProductRepository implements ReportProductRepository {
         $category_id = $request->category_id;
         $from_date = $request->from_date;
         $to_date = $request->to_date;
+        $category_name = Category::find($category_id)->name;
         $product_ids = Product::where('category_id', $category_id)->pluck('id');
         $sales = DB::table('sold_products')
             ->join('export_invoices', 'sold_products.export_invoice_id', '=', 'export_invoices.id')
@@ -237,6 +239,7 @@ class EloquentReportProductRepository implements ReportProductRepository {
         return [
             'sales_details' => $sales,
             'total_sales' => round($total_sales, 2),
+            'report_title' => '(' . $to_date . ' ' . $from_date . ')' . ' ' . $category_name . ' ' . trans('reports.PRODUCTS_SALES.REPORT_NAME'),
         ];
     }
     /*

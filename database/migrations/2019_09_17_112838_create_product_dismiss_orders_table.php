@@ -22,10 +22,6 @@ class CreateProductDismissOrdersTable extends Migration
             $table->unsignedInteger('updated_by')->nullable();
             $table->softDeletes();
             $table->timestamps();
-
-            // TABLES RELATIONSHIP
-            $table->foreign('created_by')->references('id')->on('users');
-            $table->foreign('updated_by')->references('id')->on('users');
         });
     }
 

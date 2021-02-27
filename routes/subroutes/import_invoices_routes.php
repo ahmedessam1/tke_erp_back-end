@@ -1,5 +1,5 @@
 <?php
-Route::middleware(['auth:api'])->group(function () {
+Route::middleware(['auth:api', 'tenant'])->group(function () {
     Route::prefix('import_invoices')->name('import_invoices.')->group(function () {
         // GET ALL IMPORT_INVOICES
         Route::get('/', 'ImportInvoicesController@index')

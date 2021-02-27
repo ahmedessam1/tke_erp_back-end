@@ -23,13 +23,6 @@ class CreateSupplierAddressContactsTable extends Migration
             $table->unsignedInteger('updated_by')->nullable();
             $table->softDeletes();
             $table->timestamps();
-
-            // TABLES RELATIONSHIP
-            $table->foreign('supplier_address_id')->references('id')->on('supplier_addresses');
-            $table->foreign('created_by')->references('id')->on('users');
-            $table->foreign('updated_by')->references('id')->on('users');
-            // POSITION RELATIONSHIP
-            $table->foreign('position_id')->references('id')->on('positions');
         });
     }
 

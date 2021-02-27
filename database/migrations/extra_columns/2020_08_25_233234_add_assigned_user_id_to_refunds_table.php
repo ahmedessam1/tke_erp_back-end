@@ -15,9 +15,6 @@ class AddAssignedUserIdToRefundsTable extends Migration
     {
         Schema::table('refunds', function (Blueprint $table) {
             $table->unsignedInteger('assigned_user_id')->default(1);
-
-            // TABLES RELATIONSHIP
-            $table->foreign('assigned_user_id')->references('id')->on('users');
         });
     }
 

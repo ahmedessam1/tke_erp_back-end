@@ -25,11 +25,6 @@ class CreateCustomerBranchesTable extends Migration
             $table->unsignedInteger('updated_by')->nullable();
             $table->softDeletes();
             $table->timestamps();
-
-            // TABLES RELATIONSHIP
-            $table->foreign('customer_id')->references('id')->on('customers');
-            $table->foreign('created_by')->references('id')->on('users');
-            $table->foreign('updated_by')->references('id')->on('users');
         });
     }
 

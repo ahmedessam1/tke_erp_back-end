@@ -23,7 +23,7 @@ class MoneyStoreRequest extends FormRequest
             'payment_type_id' => 'required|exists:payment_types,id',
             'amount' => 'required|numeric',
             'date' => 'required|date',
-            'user_id' => 'nullable|exists:users,id',
+            'user_id' => 'nullable|exists:landlord.users,id',
             'note' => 'max:'.trans('validation_standards.descriptions.max'),
         ];
     }

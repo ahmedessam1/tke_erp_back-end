@@ -24,8 +24,9 @@ class CustomerBranch extends Model
     protected $dates = ['deleted_at'];
 
     // MUTATORS
-    public function getCustomerAndBranchAttribute() {
-        return $this -> customer -> name . ' - ' . $this -> address;
+    public function getCustomerAndBranchAttribute()
+    {
+        return $this->customer->name . ' - ' . $this->address;
     }
 
     // RELATIONSHIPS
@@ -33,32 +34,40 @@ class CustomerBranch extends Model
      * Users.php trait contain:
      * created_by and Updated_by relationships
      */
-    public function customer () {
-        return $this -> belongsTo('App\Models\Customer\Customer', 'customer_id');
+    public function customer()
+    {
+        return $this->belongsTo('App\Models\Customer\Customer', 'customer_id');
     }
 
-    public function contacts () {
-        return $this -> hasMany('App\Models\Customer\CustomerBranchContact');
+    public function contacts()
+    {
+        return $this->hasMany('App\Models\Customer\CustomerBranchContact');
     }
 
-    public function sellers () {
-        return $this -> belongsToMany('App\User', 'customer_branches_sellers', 'customer_branch_id', 'seller_id');
+    public function sellers()
+    {
+        $database = $this->getConnection()->getDatabaseName();
+        return $this->belongsToMany('App\User', $database.'.customer_branches_sellers', 'customer_branch_id', 'seller_id');
     }
 
-    public function invoices () {
-        return $this -> hasMany('App\Models\Invoices\ExportInvoice', 'customer_branch_id') -> approved();
+    public function invoices()
+    {
+        return $this->hasMany('App\Models\Invoices\ExportInvoice', 'customer_branch_id')->approved();
     }
 
     // SCOPES
-    public function scopeGetCustomer (Builder $builder) {
-        return $builder -> with('customer');
+    public function scopeGetCustomer(Builder $builder)
+    {
+        return $builder->with('customer');
     }
 
-    public function scopeWithSellersAndContacts (Builder $builder) {
-        return $builder -> with('sellers') -> with('contacts');
+    public function scopeWithSellersAndContacts(Builder $builder)
+    {
+        return $builder->with('sellers')->with('contacts');
     }
 
-    public function scopeWithInvoices (Builder $builder) {
-        return $builder -> with('invoices');
+    public function scopeWithInvoices(Builder $builder)
+    {
+        return $builder->with('invoices');
     }
 }

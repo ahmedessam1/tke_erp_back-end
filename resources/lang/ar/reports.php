@@ -20,6 +20,10 @@ return [
             'INVOICE_DATE' => 'تاريخ الفاتورة',
         ]
     ],
+    // PRODUCTS SALES BASED ON CATEGORY
+    'PRODUCTS_SALES' => [
+        'REPORT_NAME' => 'مبيعات',
+    ],
     // CUSTOMERS
     'CUSTOMERS' => [
         'CONTRACT_DISCOUNT' => 'مضاف خصم عقد',

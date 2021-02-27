@@ -54,6 +54,7 @@ class CalculationInvoiceNetTotalCommands extends Command
                 $net_total = $invoice->invoiceTotal('import_invoice', $invoice->productCredits, 0, 0);
                 $invoice->net_total = $net_total;
                 $invoice->save();
+                $this->info('Calculating Invoice: '.$invoice->number);
             }
             $this->info('Import invoice net total has been updates successfully!');
         } else if ($invoice_type === 'export_invoice') {
@@ -62,6 +63,7 @@ class CalculationInvoiceNetTotalCommands extends Command
                 $net_total = $invoice->invoiceTotal('export_invoice', $invoice->soldProducts, 0, 0);
                 $invoice->net_total = $net_total;
                 $invoice->save();
+                $this->info('Calculating Invoice: '.$invoice->number);
             }
             $this->info('Export invoice net total has been updates successfully!');
         } else if ($invoice_type === 'refund_invoice') {
@@ -70,6 +72,7 @@ class CalculationInvoiceNetTotalCommands extends Command
                 $net_total = $invoice->invoiceTotal('refund_invoice', $invoice->refundedProducts, 0, 0);
                 $invoice->net_total = $net_total;
                 $invoice->save();
+                $this->info('Calculating Invoice: '.$invoice->number);
             }
             $this->info('Refund invoice net total has been updates successfully!');
         } else

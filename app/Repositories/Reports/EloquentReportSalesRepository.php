@@ -285,34 +285,31 @@ class EloquentReportSalesRepository implements ReportSalesRepository
             trans('excel.customers_statement.excel_file_name') . ' (' . $from_date . '~~' . $to_date . ').xlsx');
     }
 
-    public function sellersProgress($year, $seller_id, $types)
+    public function sellersProgress($year, $seller_id)
     {
         if (Auth::user()->hasRole(['sales']))
             $seller_id = $this->getAuthUserId();
-        $result = $this->cache->remember('sellers_progress_report:' . implode(':', $types) . $seller_id . $year,
-            function () use ($year, $seller_id, $types) {
+        $this->cache->forget('sellers_progress_report:' . $seller_id . $year); // TODO: remove this
+        $result = $this->cache->remember('sellers_progress_report:' . $seller_id . $year,
+            function () use ($year, $seller_id) {
                 $data = [];
                 // GET SELLER NAME
                 $seller_name = User::find($seller_id)->name;
 
                 // GET SALES, REFUNDS AND PROFIT
-                $sales_invoices = [];
-                $refunds_invoices = [];
-
-                if (in_array('sales', $types))
-                    $sales_invoices = $this->sellerInvoices($seller_id, $year, 'sales');
-                else if (in_array('refunds', $types))
-                    $refunds_invoices = $this->sellerInvoices($seller_id, $year, 'refunds');
+                $sales_invoices = $this->sellerInvoices($seller_id, $year, 'sales');
+                $refunds_invoices = $this->sellerInvoices($seller_id, $year, 'refunds');
 
                 array_push($data, [
                     'seller' => $seller_name,
-                    'data' => $this->getSellerProgress($seller_id, $year, $types),
+                    'data' => $this->getSellerProgress($seller_id, $year, ['sales', 'refunds']),
                     'sales_invoices' => $sales_invoices,
                     'refunds_invoices' => $refunds_invoices,
                     'customers_progress_percentage' => $this->getSellerProgressPerCustomerPercentage($sales_invoices),
                     'branches_sales' => $this->getSellerProgressBranchesSalesAndRefunds($seller_id, $year, ['sales']),
                     'branches_refunds' => $this->getSellerProgressBranchesSalesAndRefunds($seller_id, $year, ['refunds']),
                     'branches_profit' => $this->getSellerProgressBranchesSalesAndRefunds($seller_id, $year, ['sales', 'refunds']),
+                    'sales_per_category' => $this->sellerSalesPerCategory($seller_id, $year),
                 ]);
 
                 return json_encode($data);

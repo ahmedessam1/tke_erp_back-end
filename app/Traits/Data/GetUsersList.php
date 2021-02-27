@@ -9,16 +9,19 @@ trait GetUsersList
 {
     public function getUsersListOrderedByName()
     {
-        return User::where('active', 1)->orderedName()->pluck('name', 'id');
+        $tenant_id = Auth::user()->tenant_id;
+        return User::where('active', 1)->where('tenant_id', $tenant_id)->orderedName()->pluck('name', 'id');
     }
 
     public function getUsersListOrderedByID()
     {
-        return User::where('active', 1)->orderedID()->pluck('name', 'id');
+        $tenant_id = Auth::user()->tenant_id;
+        return User::where('active', 1)->where('tenant_id', $tenant_id)->orderedID()->pluck('name', 'id');
     }
 
     public function getLoggedUserName()
     {
-        return User::where('active', 1)->where('id', Auth::user()->id)->pluck('name', 'id');
+        $tenant_id = Auth::user()->tenant_id;
+        return User::where('active', 1)->where('tenant_id', $tenant_id)->where('id', Auth::user()->id)->pluck('name', 'id');
     }
 }

@@ -1,5 +1,5 @@
 <?php
-Route::middleware(['auth:api'])->group(function () {
+Route::middleware(['auth:api', 'tenant'])->group(function () {
     Route::prefix('initiatory')->name('initiatory.')->group(function () {
         // PRODUCT CREDITS
         Route::get('/product/credits/index', 'InitiatoryController@productCreditsIndex')

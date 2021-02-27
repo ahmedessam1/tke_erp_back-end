@@ -1,5 +1,5 @@
 <?php
-Route::middleware(['auth:api'])->group(function () {
+Route::middleware(['auth:api', 'tenant'])->group(function () {
     Route::prefix('reports/sales/')->name('reports.sales.')->group(function () {
         // GET ALL BRANCH SALES COMPARE
         Route::post('/customer_branch/compare', 'Reports\SalesReportController@customerBranchSalesCompare')

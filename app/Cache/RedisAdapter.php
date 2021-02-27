@@ -3,12 +3,21 @@
 namespace App\Cache;
 
 use Illuminate\Support\Facades\Redis;
+use Auth;
+use DB;
 
 class RedisAdapter implements CacheInterface
 {
+    private function userTenant()
+    {
+        $tenant_id = Auth::user()->tenant_id;
+        $tenant = DB::connection('landlord')->table('tenants')->find($tenant_id);
+        return $tenant->name.':';
+    }
 
     public function get($key)
     {
+        $key = $this->userTenant().$key;
         if (env('REDIS_STATUS'))
             return Redis::get($key);
         return true;
@@ -16,6 +25,7 @@ class RedisAdapter implements CacheInterface
 
     public function put($key, $value, $minutes = null)
     {
+        $key = $this->userTenant().$key;
         if (env('REDIS_STATUS')) {
             if ($minutes === null)
                 return $this->forever($key, $value);
@@ -27,6 +37,7 @@ class RedisAdapter implements CacheInterface
 
     public function forever($key, $value)
     {
+        $key = $this->userTenant().$key;
         if (env('REDIS_STATUS'))
             return Redis::set($key, $value);
         return true;
@@ -34,6 +45,7 @@ class RedisAdapter implements CacheInterface
 
     public function remember($key, callable $callback, $minutes = null)
     {
+        $key = $this->userTenant().$key;
         if (env('REDIS_STATUS')) {
             if (!is_null($value = $this->get($key)))
                 return $value;
@@ -46,6 +58,7 @@ class RedisAdapter implements CacheInterface
 
     public function forget($key)
     {
+        $key = $this->userTenant().$key;
         if (env('REDIS_STATUS'))
             return Redis::del($key);
         return true;
@@ -53,6 +66,7 @@ class RedisAdapter implements CacheInterface
 
     public function forgetByPattern($key_pattern)
     {
+        $key_pattern = $this->userTenant().$key_pattern;
         if (env('REDIS_STATUS'))
             if (count(Redis::keys($key_pattern)) > 0)
                 return Redis::del(Redis::keys($key_pattern));

@@ -32,7 +32,7 @@ class InvoiceStoreRequest extends FormRequest
                     |max:'.trans('validation_standards.names.max'),
             'number' => ['required', new InvoicesNumberRule($this->tax, null)],
             'customer_branch_id' => 'required|exists:customer_branches,id',
-            'seller_id' => 'required|exists:users,id',
+            'seller_id' => 'required|exists:landlord.users,id',
             'tax' => 'required|boolean',
             'discount' => 'numeric
                             |max:'.trans('validation_standards.discount.max').'

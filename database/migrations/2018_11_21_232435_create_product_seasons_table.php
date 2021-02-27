@@ -18,10 +18,6 @@ class CreateProductSeasonsTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('product_id');
             $table->unsignedInteger('season_id');
-
-            // PRODUCT
-            $table->foreign('product_id')->references('id')->on('products');
-            $table->foreign('season_id')->references('id')->on('seasons');
         });
     }
 

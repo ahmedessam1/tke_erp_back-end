@@ -20,9 +20,6 @@ class CreateProductLogsTable extends Migration
             $table->float('average_purchase_price')->default(0);
             $table->float('average_sell_price')->default(0);
             $table->timestamps();
-
-            // RELATIONSHIPS
-            $table->foreign('product_id')->references('id')->on('products');
         });
     }
 

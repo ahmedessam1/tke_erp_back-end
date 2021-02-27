@@ -13,17 +13,19 @@ use Spatie\Permission\Models\Role;
 class AuthController extends Controller
 {
     protected $cache;
+
     public function __construct()
     {
         $this->cache = new RedisAdapter();
     }
 
-    public function login (Request $request) {
+    public function login(Request $request)
+    {
         $http = new \GuzzleHttp\Client;
 
         // CHECK IF EMAIL IS ACTIVE
-        $active = User::where('email', $request -> email) -> where('active', 0) -> exists();
-        if($active)
+        $active = User::where('email', $request->email)->where('active', 0)->exists();
+        if ($active)
             return response()->json('This user is not active', 403);
 
         try {
@@ -32,8 +34,8 @@ class AuthController extends Controller
                     'grant_type' => 'password',
                     'client_id' => config('services.passport.client_id'),
                     'client_secret' => config('services.passport.client_secret'),
-                    'username' => $request -> email,
-                    'password' => $request -> password,
+                    'username' => $request->email,
+                    'password' => $request->password,
                 ],
             ]);
             return $response->getBody();
@@ -46,26 +48,36 @@ class AuthController extends Controller
         }
     }
 
-    public function getUserDetails () {
+    public function getUserDetails()
+    {
         // GET USER DETAILS WITH ROLES AND PERMISSIONS.
-        $user = Auth::user();
-        $user -> getAllPermissions();
+        $user = Auth::user()->load('tenant');
+        $user->getAllPermissions();
         return $user;
     }
 
-    public function register (Request $request) {
-        $this -> validate($request, [
+    public function register(Request $request)
+    {
+        $tenant_id = Auth::user()->tenant_id;
+        $tenant_domain = DB::connection('landlord')->table('tenants')->where('id', Auth::user()->tenant_id)->first()->domain;
+        $this->validate($request, [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => [
+                'required',
+                'string',
+                'max:255',
+                'unique:users'
+            ],
             'password' => 'required|string|min:4',
             'role_id' => 'required|exists:roles,id',
         ]);
-        return DB::transaction(function () use ($request) {
+        return DB::transaction(function () use ($request, $tenant_id, $tenant_domain) {
             // CREATE THE USER
             $user = User::create([
-                'name' => $request -> name,
-                'email' => $request -> email,
-                'password' => Hash::make($request -> password),
+                'name' => $request->name,
+                'email' => $request->email.'@'.$tenant_domain,
+                'password' => Hash::make($request->password),
+                'tenant_id' => $tenant_id
             ]);
             // ASSIGN ROLE TO USER
             $user->assignRole($request->role_id);
@@ -73,15 +85,17 @@ class AuthController extends Controller
         });
     }
 
-    public function edit ($user_id) {
+    public function edit($user_id)
+    {
         $user = User::with('roles')->find($user_id);
         return $user;
     }
 
-    public function update (Request $request, $user_id) {
-        $this -> validate($request, [
+    public function update(Request $request, $user_id)
+    {
+        $this->validate($request, [
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,'.$user_id,
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user_id,
             'role_id' => 'required|exists:roles,id',
         ]);
         return DB::transaction(function () use ($request, $user_id) {
@@ -98,16 +112,18 @@ class AuthController extends Controller
         });
     }
 
-    public function updatePassword (Request $request, $user_id) {
-        $this -> validate($request, ['password' => 'required|string|min:4']);
+    public function updatePassword(Request $request, $user_id)
+    {
+        $this->validate($request, ['password' => 'required|string|min:4']);
         // UPDATE USER PASSWORD
         $user = User::find($user_id);
-        $user -> password = Hash::make($request->password);
+        $user->password = Hash::make($request->password);
         $user->save();
         return $user;
     }
 
-    public function roles () {
+    public function roles()
+    {
         return Role::pluck('name', 'id');
     }
 }

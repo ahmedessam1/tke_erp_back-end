@@ -36,8 +36,5 @@ class RolePermissionSeeder extends Seeder
                 $role -> save();
             }
         }
-
-        $user = \App\User::first();
-        $user->assignRole('super_admin');
     }
 }

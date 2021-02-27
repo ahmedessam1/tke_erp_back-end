@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Tenant\Models\Tenant;
 use App\Traits\Eloquent\ActiveStatus;
 use App\Traits\Eloquent\Status;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -14,14 +15,14 @@ use Auth;
 class User extends Authenticatable
 {
     use HasApiTokens, Notifiable, HasRoles, Sorting, Status, ActiveStatus;
-
+    protected $connection = 'landlord';
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'active'
+        'name', 'email', 'password', 'active', 'tenant_id'
     ];
 
     /**
@@ -33,6 +34,11 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    // RELATIONSHIPS
+    public function tenant()
+    {
+        return $this->belongsTo(Tenant::class, 'tenant_id', 'id');
+    }
 
     /*
      * SCOPES

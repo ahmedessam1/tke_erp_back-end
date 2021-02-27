@@ -16,10 +16,6 @@ class CreateCustomerBranchesSellersTable extends Migration
         Schema::create('customer_branches_sellers', function (Blueprint $table) {
             $table->unsignedInteger('seller_id');
             $table->unsignedInteger('customer_branch_id');
-
-            // TABLES RELATIONSHIP
-            $table->foreign('seller_id')->references('id')->on('users');
-            $table->foreign('customer_branch_id')->references('id')->on('customer_branches');
         });
     }
 

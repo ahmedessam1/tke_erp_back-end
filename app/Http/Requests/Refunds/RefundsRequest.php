@@ -28,7 +28,7 @@ class RefundsRequest extends FormRequest
                         |min:'.trans('validation_standards.names.min').'
                         |max:'.trans('validation_standards.names.max'),
 
-            'assigned_user_id' => 'required|exists:users,id',
+            'assigned_user_id' => 'required|exists:landlord.users,id',
 
             'number' => 'required
                         |numeric',

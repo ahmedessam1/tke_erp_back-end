@@ -24,15 +24,6 @@ class CreateProductsTable extends Migration
             $table->unsignedInteger('updated_by')->nullable();
             $table->softDeletes();
             $table->timestamps();
-
-            // TABLES RELATIONSHIP
-            // USERS
-            $table->foreign('created_by')->references('id')->on('users');
-            $table->foreign('updated_by')->references('id')->on('users');
-            // CATEGORIES
-            $table->foreign('category_id')->references('id')->on('categories');
-            // LOCAL_CODE
-            $table->foreign('local_code_id')->references('id')->on('local_codes');
         });
     }
 

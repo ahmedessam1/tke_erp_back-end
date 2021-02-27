@@ -22,10 +22,6 @@ class CreateRefundProductsTable extends Migration
             $table->boolean('valid')->default(1);
             $table->softDeletes();
             $table->timestamps();
-
-            // TABLES RELATIONSHIP
-            $table->foreign('refund_id')->references('id')->on('refunds');
-            $table->foreign('product_id')->references('id')->on('products');
         });
     }
 

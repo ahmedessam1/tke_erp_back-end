@@ -29,8 +29,6 @@ class CreateCustomerBranchContactsTable extends Migration
             // TABLES RELATIONSHIP
             $table->foreign('customer_branch_id')->references('id')->on('customer_branches');
             $table->foreign('position_id')->references('id')->on('positions');
-            $table->foreign('created_by')->references('id')->on('users');
-            $table->foreign('updated_by')->references('id')->on('users');
         });
     }
 

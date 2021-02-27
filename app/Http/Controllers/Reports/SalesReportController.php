@@ -45,6 +45,6 @@ class SalesReportController extends Controller
 
     public function sellersProgress(Request $request)
     {
-        return $this->model->sellersProgress($request->year, $request->seller_id, $request->type);
+        return $this->model->sellersProgress($request->year, $request->seller_id);
     }
 }

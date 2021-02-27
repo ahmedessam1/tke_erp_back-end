@@ -1,5 +1,5 @@
 <?php
-Route::middleware(['auth:api'])->group(function () {
+Route::middleware(['auth:api', 'tenant'])->group(function () {
     Route::prefix('warehouses')->name('warehouses.')->group(function () {
         // GET ALL WAREHOUSES
         Route::get('/', 'WarehousesController@index')

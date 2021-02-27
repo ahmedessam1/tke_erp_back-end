@@ -22,11 +22,6 @@ class CreateSupplierInitiatoryCreditsTable extends Migration
             $table->unsignedInteger('updated_by')->nullable();
             $table->softDeletes();
             $table->timestamps();
-
-            // TABLES RELATIONSHIP
-            $table->foreign('supplier_id')->references('id')->on('suppliers');
-            $table->foreign('created_by')->references('id')->on('users');
-            $table->foreign('updated_by')->references('id')->on('users');
         });
     }
 

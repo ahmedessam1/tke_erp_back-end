@@ -1,5 +1,5 @@
 <?php
-Route::middleware(['auth:api'])->group(function () {
+Route::middleware(['auth:api', 'tenant'])->group(function () {
     Route::prefix('refunds')->name('refunds.')->group(function () {
         // GET REFUNDS
         Route::get('/', 'RefundsController@index')

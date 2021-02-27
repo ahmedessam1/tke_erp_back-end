@@ -1,5 +1,5 @@
 <?php
-Route::middleware(['auth:api'])->group(function () {
+Route::middleware(['auth:api', 'tenant'])->group(function () {
     Route::prefix('reports/products/')->name('reports.products.')->group(function () {
         // EXPORT PRODUCT CREDITS TO EXCEL
         Route::get('/credits_export', 'Reports\ProductsReportController@exportProductsCredit')

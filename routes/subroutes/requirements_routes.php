@@ -1,5 +1,5 @@
 <?php
-Route::middleware(['auth:api'])->group(function () {
+Route::middleware(['auth:api', 'tenant'])->group(function () {
     Route::prefix('requirements')->name('requirements.')->group(function () {
         // GET PAYMENT METHODS
         Route::get('/users', 'RequirementsController@users')

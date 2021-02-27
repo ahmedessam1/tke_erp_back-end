@@ -30,7 +30,7 @@ class CustomersPaymentRequest extends FormRequest
                                 |numeric
                                 |max:'.trans('validation_standards.payment.max').'
                                 |min:'.trans('validation_standards.payment.min').'',
-            'money_courier_id'  => 'required|exists:users,id',
+            'money_courier_id'  => 'required|exists:landlord.users,id',
             'payment_type_id'   => 'required|exists:payment_types,id',
         ];
     }

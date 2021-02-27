@@ -36,7 +36,7 @@ class ExportInvoicesRequest extends FormRequest
 
             'invoice_data.customer_branch_id' => 'required|exists:customer_branches,id',
 
-            'invoice_data.seller_id' => 'required|exists:users,id',
+            'invoice_data.seller_id' => 'required|exists:landlord.users,id',
 
             'invoice_data.tax'          => 'required|boolean',
 

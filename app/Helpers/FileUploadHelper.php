@@ -1,12 +1,14 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
 
 if (!function_exists('uploadImageWithThumbnail')) {
     function uploadImageWithThumbnail($image, $location, $main_height, $thumbnail_height)
     {
-        $main_location = $location . '/main';
-        $thumbnail_location = $location . '/thumbnail';
+        $tenant_domain = Auth::user()->tenant->domain;
+        $main_location = $location . '/' . $tenant_domain . '/main';
+        $thumbnail_location = $location . '/' . $tenant_domain . '/thumbnail';
         $large_image = resizingTheImage($image, $main_location, $main_height);
         $thumbnail_image = resizingTheImage($image, $thumbnail_location, $thumbnail_height);
         return [
@@ -47,11 +49,11 @@ if (!function_exists('uniqueImageName')) {
 if (!function_exists('uploadFileHelper')) {
     function uploadFileHelper($file)
     {
+        $tenant_domain = Auth::user()->tenant->domain;
         // RENAMING THE ORIGINAL FILE
-        $file_original_name = $file->getClientOriginalName();
         $file_original_extension = $file->getClientOriginalExtension();
         $new_file_unique_name = uniqueImageName($file_original_extension);
-        $file->storeAs('public/uploads/files/', $new_file_unique_name);
+        $file->storeAs('public/uploads/' . $tenant_domain . '/files/', $new_file_unique_name);
         return $new_file_unique_name;
     }
 }

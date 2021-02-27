@@ -2,11 +2,16 @@
 
 namespace App\Traits\Repository\Reports\Sales;
 
+use App\Models\Category\Category;
 use App\Models\Customer\CustomerBranch;
 use App\Models\Invoices\ExportInvoice;
+use App\Models\Product\Product;
+use App\Models\Product\SoldProducts;
 use App\Models\Refund\Refund;
+use DB;
 
-trait SellersProgress {
+trait SellersProgress
+{
     /**
      * @param $seller_id
      * @param $year
@@ -24,7 +29,7 @@ trait SellersProgress {
                     ->whereYear('date', $year)
                     ->whereMonth('date', $i + 1)
                     ->get();
-                foreach($temp_sales_invoice as $t_s_i)
+                foreach ($temp_sales_invoice as $t_s_i)
                     $monthly_sum += $t_s_i->total_after_tax;
             }
 
@@ -34,7 +39,7 @@ trait SellersProgress {
                     ->whereYear('date', $year)
                     ->whereMonth('date', $i + 1)
                     ->get();
-                foreach($temp_refund_invoice as $t_r_i)
+                foreach ($temp_refund_invoice as $t_r_i)
                     $monthly_sum -= $t_r_i->total_after_tax;
             }
 
@@ -78,11 +83,13 @@ trait SellersProgress {
      * @param $sales_invoices
      * @return array
      */
-    public function getSellerProgressPerCustomerPercentage($sales_invoices) {
+    public function getSellerProgressPerCustomerPercentage($sales_invoices)
+    {
         $holder = [];
         $total_sales = 0;
-        foreach($sales_invoices as $sales_invoice) {
-            foreach($sales_invoice as $s_i) {
+
+        foreach ($sales_invoices as $sales_invoice) {
+            foreach ($sales_invoice as $s_i) {
                 $total_sales += $s_i->total_after_tax;
                 $customer = $s_i->customerBranch;
                 array_push($holder, [
@@ -94,34 +101,49 @@ trait SellersProgress {
         }
 
         $result = [];
-        foreach($holder as $k => $v) {
+        foreach ($holder as $k => $v) {
             $id = $v['customer_id'];
             $result[$id]['customer_name'] = $v['customer_name'];
             $result[$id]['calculations'][] = $v['sales_total'];
         }
         $sorted_result = [];
-        foreach($result as $key => $value) {
+        foreach ($result as $key => $value) {
             $sorted_result[] = [
                 'customer_id' => $key, 'total_sales' => $total_sales,
                 'customer_name' => $value['customer_name'], 'sales_total' => array_sum($value['calculations'])
             ];
         }
 
-        for($i = 0; $i < count($sorted_result); $i++) {
+        for ($i = 0; $i < count($sorted_result); $i++) {
             $number = $sorted_result[$i]['sales_total'];
-            $percentage = ($number*100)/$total_sales;
+            $percentage = ($number * 100) / $total_sales;
             $sorted_result[$i]['percentage'] = round($percentage, 2);
         }
 
         return $sorted_result;
     }
 
+    /**
+     * @param $seller_id
+     * @param $year
+     * @param $types
+     * @return array
+     */
     public function getSellerProgressBranchesSalesAndRefunds($seller_id, $year, $types)
     {
+        $sale_ids = []; $refund_ids = [];
+        if (in_array('sales', $types))
+            $sale_ids = ExportInvoice::approved()->where('seller_id', $seller_id)->whereYear('date', $year)->distinct()->pluck('customer_branch_id')->toArray();
+
+        if (in_array('refunds', $types))
+            $refund_ids = Refund::approved()->where('assigned_user_id', $seller_id)
+                ->where('type', 'in')->whereYear('date', $year)->distinct()->pluck('model_id')->toArray();
+
+        $merged_array = array_merge($sale_ids, $refund_ids);
+
+        $customer_branch_ids = array_unique($merged_array);
+
         $month_and_sum = [];
-        $customer_branch_ids = CustomerBranch::whereHas('sellers', function ($query) use ($seller_id) {
-            $query->where('seller_id', $seller_id);
-        })->pluck('id');
         $counter = count($customer_branch_ids);
 
         for ($i = 0; $i < $counter; $i++) {
@@ -133,9 +155,9 @@ trait SellersProgress {
 
                 if (in_array('sales', $types)) {
                     $data = ExportInvoice::withCustomerBranch()
-                        ->approved()
                         ->where('customer_branch_id', $customer_branch_ids[$i])
                         ->where('seller_id', $seller_id)
+                        ->approved()
                         ->whereYear('date', $year)
                         ->whereMonth('date', $x + 1)
                         ->get();
@@ -147,8 +169,8 @@ trait SellersProgress {
 
                 if (in_array('refunds', $types)) {
                     $data = Refund::approved()
-                        ->where('model_id', $customer_branch_ids[$i])
                         ->where('assigned_user_id', $seller_id)
+                        ->where('model_id', $customer_branch_ids[$i])
                         ->where('type', 'in')
                         ->whereYear('date', $year)
                         ->whereMonth('date', $x + 1)
@@ -159,7 +181,7 @@ trait SellersProgress {
                 }
 
                 array_push($holder, [
-                    'sum' => round($sum, 2),
+                    'sum' => round($sum),
                     'customer' => $customer,
                 ]);
             }
@@ -167,5 +189,46 @@ trait SellersProgress {
         }
 
         return $month_and_sum;
+    }
+
+    /**
+     *
+     */
+    public function sellerSalesPerCategory($seller_id, $year)
+    {
+        // GET PRODUCTS IDS
+        $sales = DB::table('sold_products')
+            ->join('export_invoices', 'sold_products.export_invoice_id', '=', 'export_invoices.id')
+            ->join('products', function($join) {
+                $join->on('sold_products.product_id', '=', 'products.id');
+            })
+            ->join('categories', function($join) {
+                $join->on('categories.id', '=', 'products.category_id');
+            })
+            ->whereNull('export_invoices.deleted_at')
+            ->where('export_invoices.approve', 1)
+            ->where('export_invoices.seller_id', $seller_id)
+            ->whereNull('sold_products.deleted_at')
+            ->whereYear('export_invoices.date', $year)
+            ->select(
+                DB::raw('categories.name as category_name'),
+                DB::raw('SUM(quantity) as quantity'),
+                DB::raw('SUM(
+                ((sold_price * quantity) - ((sold_price * quantity) * sold_products.discount / 100))
+                -
+                (((sold_price * quantity) - ((sold_price * quantity) * sold_products.discount / 100))) * ((export_invoices.discount / 100))
+                ) as sales')
+            )
+            ->groupBy('category_name')
+            ->orderBy('sales', 'DESC')
+            ->get();
+        $counter = count($sales);
+        $total_sales = 0;
+        for($x = 0; $x < $counter;  $x++)
+            $total_sales += $sales[$x]->sales;
+        return [
+            'sales_details' => $sales,
+            'total_sales' => round($total_sales, 2),
+        ];
     }
 }

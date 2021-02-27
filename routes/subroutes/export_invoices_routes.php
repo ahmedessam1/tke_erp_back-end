@@ -1,5 +1,5 @@
 <?php
-Route::middleware(['auth:api'])->group(function () {
+Route::middleware(['auth:api', 'tenant'])->group(function () {
     Route::prefix('export_invoices')->name('export_invoices.')->group(function () {
         // GET ALL EXPORT_INVOICES
         Route::get('/', 'ExportInvoicesController@index')

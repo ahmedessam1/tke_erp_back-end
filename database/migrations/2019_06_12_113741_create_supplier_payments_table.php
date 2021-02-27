@@ -31,17 +31,6 @@ class CreateSupplierPaymentsTable extends Migration
             $table->unsignedInteger('updated_by')->nullable();
             $table->softDeletes();
             $table->timestamps();
-
-            // TABLES RELATIONSHIP
-            // USERS
-            $table->foreign('created_by')->references('id')->on('users');
-            $table->foreign('updated_by')->references('id')->on('users');
-            // SUPPLIERS
-            $table->foreign('supplier_id')->references('id')->on('suppliers');
-            $table->foreign('supplier_address_id')->references('id')->on('supplier_addresses');
-            $table->foreign('supplier_contact_id')->references('id')->on('supplier_address_contacts');
-            // PAYMENT TYPE
-            $table->foreign('payment_type_id')->references('id')->on('payment_types');
         });
     }
 

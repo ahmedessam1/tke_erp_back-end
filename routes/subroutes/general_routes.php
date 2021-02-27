@@ -1,5 +1,5 @@
 <?php
-Route::middleware(['auth:api'])->group(function () {
+Route::middleware(['auth:api', 'tenant'])->group(function () {
     Route::prefix('general')->name('general.')->group(function () {
         // ATTACH FILES TO INVOICES AND OTHERS
         Route::post('/attach_file', 'GeneralController@attachFileToModel')

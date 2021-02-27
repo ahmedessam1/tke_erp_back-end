@@ -1,5 +1,5 @@
 <?php
-Route::middleware(['auth:api'])->group(function () {
+Route::middleware(['auth:api', 'tenant'])->group(function () {
     Route::prefix('product_dismiss_orders')->name('products_dismiss_order.')->group(function () {
         // GET ALL PRODUCT DISMISS ORDERS
         Route::get('/', 'ProductDismissOrdersController@index')

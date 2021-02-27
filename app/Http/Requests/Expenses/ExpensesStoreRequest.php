@@ -24,7 +24,7 @@ class ExpensesStoreRequest extends FormRequest
             'amount' => 'required|numeric',
             'date' => 'required|date',
             'customer_id' => 'nullable|exists:customers,id',
-            'user_id' => 'nullable|exists:users,id',
+            'user_id' => 'nullable|exists:landlord.users,id',
             'note' => 'max:'.trans('validation_standards.descriptions.max'),
             'payment_type_id' => 'required|exists:payment_types,id',
         ];

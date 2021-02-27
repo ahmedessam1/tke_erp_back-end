@@ -21,11 +21,6 @@ class CreateProductDismissOrderProductsTable extends Migration
             $table->unsignedInteger('quantity');
             $table->softDeletes();
             $table->timestamps();
-
-            // TABLES RELATIONSHIP
-            $table->foreign('product_dismiss_order_id')->references('id')->on('product_dismiss_orders');
-            $table->foreign('reason_id')->references('id')->on('product_dismiss_reasons');
-            $table->foreign('product_id')->references('id')->on('products');
         });
     }
 
