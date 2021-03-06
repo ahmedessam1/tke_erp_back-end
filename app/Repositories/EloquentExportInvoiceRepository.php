@@ -281,10 +281,6 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
                 $w_query->orWhereHas('customerBranch.customer', function ($query) use ($q) {
                     $query->where('name', 'LIKE', '%' . $q . '%');
                 });
-                // SEARCH BY SELLER NAME
-                $w_query->orWhereHas('seller', function ($query) use ($q) {
-                    $query->where('name', 'LIKE', '%' . $q . '%');
-                });
             })
             ->orderBy($sorting['sort_by'], $sorting['sort_type'])
             ->paginate(30);
@@ -318,7 +314,10 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
             $invoice_product_net_price = $product->sold_price;
 
             // LOGGED PRODUCT DATA
-            $product_log = ProductCredits::where('product_id', $invoice_product_id)->orderBy('id', 'DESC')->first();
+            $product_log = ProductCredits::approved()
+                ->where('product_id', $invoice_product_id)
+                ->where('purchase_price', '>', 0)
+                ->orderBy('id', 'DESC')->first();
             $product_log_purchase_price = $product_log->purchase_price;
             if($product_log->discount > 0)
                 $product_log_purchase_price = $product_log_purchase_price - ($product_log_purchase_price * ($product_log->discount/100));
