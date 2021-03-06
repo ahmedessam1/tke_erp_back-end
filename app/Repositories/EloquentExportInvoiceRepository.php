@@ -77,10 +77,6 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
                 $query->orWhereHas('customerBranch.customer', function ($query) use ($q) {
                     $query->where('name', 'LIKE', '%' . $q . '%');
                 });
-                // SEARCH BY SELLER NAME
-                $query->orWhereHas('seller', function ($query) use ($q) {
-                    $query->where('name', 'LIKE', '%' . $q . '%');
-                });
             })
             ->orderBy($sorting['sort_by'], $sorting['sort_type'])
             ->paginate(30);
