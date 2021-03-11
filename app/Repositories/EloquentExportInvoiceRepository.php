@@ -314,9 +314,11 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
             $invoice_product_net_price = $product->sold_price;
 
             // LOGGED PRODUCT DATA
-            $product_log = ProductCredits::approved()
-                ->where('product_id', $invoice_product_id)
+            $product_log = ProductCredits::where('product_id', $invoice_product_id)
                 ->where('purchase_price', '>', 0)
+                ->whereHas('exportInvoice', function($query) {
+                    $query->where('approve', 1);
+                })
                 ->orderBy('id', 'DESC')->first();
             $product_log_purchase_price = $product_log->purchase_price;
             if($product_log->discount > 0)
