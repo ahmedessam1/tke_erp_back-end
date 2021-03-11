@@ -321,8 +321,8 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
                 })
                 ->orderBy('id', 'DESC')->first();
             if(!$product_log) {
-                $product_log = ProductLog::where('product_id', $invoice_product_id)->where('average_purchase_price', '>', 0)->first();
-                if($product_log) {
+                $product_log = ProductLog::where('product_id', $invoice_product_id)->first();
+                if($product_log->average_purchase_price > 0) {
                     $product_log_purchase_price = $product_log->average_purchase_price;
                 } else {
                     // IF PRODUCT DOESNT HAVE A PURCHASE PRICE ON SYSTEM THEN ADD 15% PROFIT
