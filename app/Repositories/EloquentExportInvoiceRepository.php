@@ -316,7 +316,7 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
             // LOGGED PRODUCT DATA
             $product_log = ProductCredits::where('product_id', $invoice_product_id)
                 ->where('purchase_price', '>', 0)
-                ->whereHas('exportInvoice', function($query) {
+                ->whereHas('importInvoice', function($query) {
                     $query->where('approve', 1);
                 })
                 ->orderBy('id', 'DESC')->first();
