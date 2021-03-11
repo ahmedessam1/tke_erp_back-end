@@ -327,7 +327,7 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
                 } else {
                     // IF PRODUCT DOESNT HAVE A PURCHASE PRICE ON SYSTEM THEN ADD 15% PROFIT
                     $average_sell_price = $product_log->average_sell_price;
-                    $product_log_purchase_price = $average_sell_price * ((100-15) / 100)
+                    $product_log_purchase_price = $average_sell_price * ((100-15) / 100);
                 }
             } else {
                 $product_log_purchase_price = $product_log->purchase_price;
