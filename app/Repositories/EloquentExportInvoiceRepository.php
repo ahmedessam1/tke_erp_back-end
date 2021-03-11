@@ -320,6 +320,8 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
                     $query->where('approve', 1);
                 })
                 ->orderBy('id', 'DESC')->first();
+            if(!$product_log)
+                $product_log = ProductLog::where('product_id', $invoice_product_id)->where('average_purchase_price', '>', 0)->first(); 
             $product_log_purchase_price = $product_log->purchase_price;
             if($product_log->discount > 0)
                 $product_log_purchase_price = $product_log_purchase_price - ($product_log_purchase_price * ($product_log->discount/100));
