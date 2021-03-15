@@ -4,11 +4,11 @@ use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
 
 if (!function_exists('uploadImageWithThumbnail')) {
-    function uploadImageWithThumbnail($image, $location, $main_height, $thumbnail_height)
+    function uploadImageWithThumbnail($image, $main_height, $thumbnail_height)
     {
         $tenant_domain = Auth::user()->tenant->domain;
-        $main_location = $location . '/' . $tenant_domain . '/main';
-        $thumbnail_location = $location . '/' . $tenant_domain . '/thumbnail';
+        $main_location = $tenant_domain . '/products/main';
+        $thumbnail_location = $tenant_domain . '/products/thumbnail';
         $large_image = resizingTheImage($image, $main_location, $main_height);
         $thumbnail_image = resizingTheImage($image, $thumbnail_location, $thumbnail_height);
         return [

@@ -68,7 +68,6 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
             ->where(function ($query) use ($tax_conditions, $q) {
                 $query->where('name', 'LIKE', '%' . $q . '%');
                 $query->orWhere('number', 'LIKE', '%' . $q . '%');
-                $query->orWhere('date', 'LIKE', '%' . $q . '%');
                 // SEARCH FOR CUSTOMER BRANCH
                 $query->orWhereHas('customerBranch', function ($query) use ($q) {
                     $query->where('address', 'LIKE', '%' . $q . '%');
@@ -272,7 +271,6 @@ class EloquentExportInvoiceRepository implements ExportInvoiceRepository
             ->where(function ($w_query) use ($q) {
                 $w_query->where('name', 'LIKE', '%' . $q . '%');
                 $w_query->orWhere('number', 'LIKE', '%' . $q . '%');
-                $w_query->orWhere('date', 'LIKE', '%' . $q . '%');
                 // SEARCH FOR CUSTOMER BRANCH
                 $w_query->orWhereHas('customerBranch', function ($query) use ($q) {
                     $query->where('address', 'LIKE', '%' . $q . '%');

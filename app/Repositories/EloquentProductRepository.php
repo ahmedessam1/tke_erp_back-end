@@ -237,10 +237,9 @@ class EloquentProductRepository implements ProductRepository
     private function addProductImages($image)
     {
         // IMAGE UPLOADING AND GETTING LARGE IMAGE AND THUMBNAIL IMAGE NAMES
-        $location = 'products';
         $large_height = trans('validation_standards.images.products.large.height');
         $thumbnail_height = trans('validation_standards.images.products.thumbnail.height');
-        return uploadImageWithThumbnail($image, $location, $large_height, $thumbnail_height);
+        return uploadImageWithThumbnail($image, $large_height, $thumbnail_height);
     }
 
     private function storeImagesToDatabase($images, $product_id, $status)
