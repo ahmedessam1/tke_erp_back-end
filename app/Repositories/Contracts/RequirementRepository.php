@@ -32,4 +32,7 @@ interface RequirementRepository {
 
     // RETURN PRODUCT DISMISS REASONS
     public function expensesTypes();
+
+    // RETURN INVOICE NUMBER BASED ON THE 5 TYPES OF INVOICES
+    public function invoiceNumberGenerator($invoice_type);
 }

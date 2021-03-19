@@ -73,4 +73,10 @@ class RequirementsController extends Controller
     {
         return Response::json($this->model->expensesTypes());
     }
+
+    // INVOICE NUMBER GENERATOR
+    public function invoiceNumberGenerator($invoice_type)
+    {
+        return Response::json($this->model->invoiceNumberGenerator($invoice_type));
+    }
 }

@@ -31,7 +31,8 @@ class RefundsRequest extends FormRequest
             'assigned_user_id' => 'required|exists:landlord.users,id',
 
             'number' => 'required
-                        |numeric',
+                        |numeric
+                        |unique:refunds,number,' . $this->refund_id . ',id,deleted_at,NULL,type,' . $this->type,
 
 
             'model_id' => 'required',
