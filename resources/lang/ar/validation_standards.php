@@ -66,7 +66,7 @@ return [
     ],
     // QUANTITY
     'quantity' => [
-        'max' => '8000',
+        'max' => '90000',
         'min' => '1',
     ],
     // PAYMENT
