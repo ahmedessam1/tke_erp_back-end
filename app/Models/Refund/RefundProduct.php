@@ -4,17 +4,20 @@ namespace App\Models\Refund;
 
 use App\Models\Product\Product;
 use App\Observers\RefundProductObserver;
+use App\Traits\Eloquent\FieldsPermission;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class RefundProduct extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, FieldsPermission;
 
     // FILLABLE
     protected $fillable = [
         'refund_id', 'product_id', 'quantity', 'price', 'discount', 'valid'
     ];
+
+    protected $hidden = [];
 
     // APPENDS
     protected $appends = ['item_net_price'];
@@ -27,6 +30,21 @@ class RefundProduct extends Model
     {
         parent::boot();
         RefundProduct::observe(new RefundProductObserver());
+    }
+
+    // HIDING FIELDS THAT USER DOES NOT HAVE PERMISSION TO SEE
+    public function toArray()
+    {
+        $hide_price = '';
+        if($this->refundOrder->type === 'out')
+            $hide_price = 'price';
+        $hidden = $this->fieldHidePermission([
+            ['roles' => ['super_admin'], 'field' => 'item_net_price'],
+            ['roles' => ['super_admin'], 'field' => $hide_price],
+        ]);
+        $this->hidden = $hidden;
+
+        return parent::toArray();
     }
 
     // RELATIONSHIPS

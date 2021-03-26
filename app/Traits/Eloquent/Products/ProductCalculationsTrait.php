@@ -61,7 +61,7 @@ trait ProductCalculationsTrait
                 });
             })
             ->orderBy('id', 'DESC')
-            ->limit(10)
+            ->limit(2)
             ->get();
 
         $total = [];
@@ -86,7 +86,7 @@ trait ProductCalculationsTrait
                 $query->Approved();
             })
             ->orderBy('id', 'DESC')
-            ->limit(10)
+            ->limit(2)
             ->get();
 
         $total = [];
