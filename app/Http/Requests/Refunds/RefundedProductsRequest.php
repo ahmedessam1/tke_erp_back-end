@@ -36,7 +36,7 @@ class RefundedProductsRequest extends FormRequest
                 'required',
                 'integer',
                 'min:'.trans('validation_standards.quantity.min'),
-                new RefundToSupplierMaxQuantity($this -> refund_id, $this -> product_id, $this -> quantity),
+                // new RefundToSupplierMaxQuantity($this -> refund_id, $this -> product_id, $this -> quantity),
             ],
             'price' => 'required',
         ];
