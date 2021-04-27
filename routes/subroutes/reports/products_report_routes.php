@@ -29,7 +29,7 @@ Route::middleware(['auth:api', 'tenant'])->group(function () {
         // EXPORT SUPPLIER PRODUCT CREDITS TO EXCEL
         Route::post('/supplier/products/credits_export', 'Reports\ProductsReportController@exportSupplierProductsCredit')
             -> name('supplier.products.credits_export')
-            -> middleware(['role:super_admin|accountant']);
+            -> middleware(['role:super_admin']);
 
         // CATEGORY SALES WITHIN TIME RANGE
         Route::post('/sales', 'Reports\ProductsReportController@sales')
