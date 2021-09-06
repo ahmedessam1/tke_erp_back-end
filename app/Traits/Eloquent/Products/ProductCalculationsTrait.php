@@ -78,13 +78,14 @@ trait ProductCalculationsTrait
             return $average_purchase_price;
         }
         */
-        $purchase_products = ProductCredits::where('product_id', $product_id)->orderBy('id', 'DESC')->where(function ($q) {
+        $purchase_product = ProductCredits::where('product_id', $product_id)->orderBy('id', 'DESC')->where(function ($q) {
                 $q->whereHas('importInvoice', function ($query) {
                     $query->approved();
                 });
-            })->limit(1)->first();
-        $product_net_price = $this->productNetPrice('purchase', $purchase_products);
-        return $product_net_price;
+            })->first();
+        if($purchase_product)
+            return $this->productNetPrice('purchase', $purchase_products);
+        return 0;
     }
 
     public function calculateProductAvgSellPrice($product_id)
