@@ -84,7 +84,7 @@ trait ProductCalculationsTrait
                 });
             })->first();
         if($purchase_product)
-            return $this->productNetPrice('purchase', $purchase_products);
+            return $this->productNetPrice('purchase', $purchase_product);
         return 0;
     }
 
