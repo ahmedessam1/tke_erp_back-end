@@ -82,7 +82,7 @@ trait ProductCalculationsTrait
                 $q->whereHas('importInvoice', function ($query) {
                     $query->approved();
                 });
-            })->limit(1)->get();
+            })->limit(1)->first();
         $product_net_price = $this->productNetPrice('purchase', $purchase_products);
         return $product_net_price;
     }
