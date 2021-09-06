@@ -54,6 +54,7 @@ trait ProductCalculationsTrait
 
     public function calculateProductAvgPurchasePrice($product_id)
     {
+        /*
         $purchase_products = ProductCredits::where('product_id', $product_id)
             ->where(function ($q) {
                 $q->whereHas('importInvoice', function ($query) {
@@ -76,7 +77,14 @@ trait ProductCalculationsTrait
             $average_purchase_price = $sum_total / $purchase_products->sum('quantity');
             return $average_purchase_price;
         }
-        return 0;
+        */
+        $purchase_products = ProductCredits::where('product_id', $product_id)->orderBy('id', 'DESC')->where(function ($q) {
+                $q->whereHas('importInvoice', function ($query) {
+                    $query->approved();
+                });
+            })->limit(1)->get();
+        $product_net_price = $this->productNetPrice('purchase', $purchase_products);
+        return $product_net_price;
     }
 
     public function calculateProductAvgSellPrice($product_id)
